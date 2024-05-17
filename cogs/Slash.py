@@ -114,9 +114,9 @@ class Slash(commands.Cog):
             await interaction.response.send_message("此伺服器禁用此功能")
 
     @app_commands.command(name="新增動態文字頻道",description="新增屬於你的文字頻道")
-    async def newchannelyou(self,interaction:discord.Interaction,channelneme:str):
+    async def newchannelyou(self,interaction:discord.Interaction,channelname:str):
         guild = interaction.guild
-        newchannel = await guild.create_text_channel(name=channelneme,topic=f"屬於 {interaction.user.name} 與他的朋友們的專屬文字頻道,使用完畢記得刪除!請注意!扳手還是看的到此頻道")
+        newchannel = await guild.create_text_channel(name=channelname,topic=f"屬於 {interaction.user.name} 與他的朋友們的專屬文字頻道,使用完畢記得刪除!請注意!扳手還是看的到此頻道")
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False)
         }

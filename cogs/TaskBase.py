@@ -47,4 +47,4 @@ class TaskBase(commands.Cog):
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
-    await bot.add_cog(TaskBase(bot),guild = discord.Object(id = 1213748875471364137))
+    await bot.add_cog(TaskBase(bot))

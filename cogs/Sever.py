@@ -21,4 +21,4 @@ class Sever(commands.Cog):
                     await interaction.followup.send(f"No invite found for {guild.name}")
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Sever(bot),guild = discord.Object(id = 1213748875471364137))
+    await bot.add_cog(Sever(bot))
