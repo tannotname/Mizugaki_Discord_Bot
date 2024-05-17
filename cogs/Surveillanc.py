@@ -40,7 +40,7 @@ class Surveillanc(commands.Cog):
             if message.attachments:
                 for attachment in message.attachments:
                     # 發送圖片連結
-                    await channel.send(attachment.url)
+                    await channel.send(attachment)
 
 
 async def setup(bot: commands.Bot):
