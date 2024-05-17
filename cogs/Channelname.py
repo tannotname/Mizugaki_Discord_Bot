@@ -21,14 +21,25 @@ class Channelname(commands.Cog):
     @app_commands.command(name = "刪除文字頻道", description = "刪除文字頻道")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def deletetextchannel(self,interaction: discord.Interaction, channel: discord.TextChannel):
-            await channel.delete()
             await interaction.response.send_message(f"已刪除{channel}頻道")
+            await channel.delete()
+
+    @app_commands.command(name = "刪除類別", description = "刪除類別")
+    @app_commands.checks.has_permissions(manage_channels=True)
+    async def delecategorychannel(self,interaction: discord.Interaction, category: discord.CategoryChannel):
+            channels = category.channels
+            for channel in channels:
+                print(f"已刪除{channel.name}頻道")
+                await channel.delete()
+            await interaction.response.send_message(f"已刪除{category.name}")
+            await category.delete()
+            
 
     @app_commands.command(name = "刪除語音頻道", description = "刪除語音頻道")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def deletevoicechannel(self,interaction: discord.Interaction, channel: discord.VoiceChannel):
-            await channel.delete()
             await interaction.response.send_message(f"已刪除{channel}頻道")
+            await channel.delete()
 
     @app_commands.command(name="更改語音頻道位元率", description="更改語音頻道位元率")
     @app_commands.checks.has_permissions(manage_channels=True)

@@ -68,13 +68,20 @@ class Event(commands.Cog):
         if  message.content == '下班':
             await message.reply(random.choice(['恭下','去加班','攻下']))
 
+        if message.content == "&marry <@998929254265929788>" :
+                await asyncio.sleep(2)
+                await message.reply(random.choice(['喔！親愛的，我覺得你太好了，我配不上你！','你很好！但抱歉，我現在還不想結婚、進入婚姻！','比起當夫妻，我覺得我們當朋友會更適合！','很抱歉讓你誤會，但我真的把你當好朋友！','我真的也很喜歡你，但我覺得真的在一起會是個錯誤！','我已經看見在一起後未來會發生的問題，所以當朋友比較長久！','我相信你一定會找到更適合的人，我真的不適合你！']))
+
+        if "看開了" in message.content:
+            await message.reply("https://cdn.discordapp.com/attachments/1226176299647893575/1241067493448089783/IMG_0488.jpg?ex=6648d9ac&is=6647882c&hm=1e02c6ab7f6b2d0429095c8e44d198e1a61a65d618afaaf9d75055aa789c49b8&")
+
+
+        # 以下為支援伺服器專用
+
+
         if  message.guild.id == 1213748875471364137 or message.guild.id == 1238133524662325351:
             if message.content == """富婆養我""":
                 await message.channel.send('https://tenor.com/view/richfemale-gif-27270977')
-
-            if message.content == "&marry <@998929254265929788>" :
-                await asyncio.sleep(2)
-                await message.reply(random.choice(['喔！親愛的，我覺得你太好了，我配不上你！','你很好！但抱歉，我現在還不想結婚、進入婚姻！','比起當夫妻，我覺得我們當朋友會更適合！','很抱歉讓你誤會，但我真的把你當好朋友！','我真的也很喜歡你，但我覺得真的在一起會是個錯誤！','我已經看見在一起後未來會發生的問題，所以當朋友比較長久！','我相信你一定會找到更適合的人，我真的不適合你！']))
 
             if message.content == 'mch':
                 await message.channel.send('<a:modcheck:1227279045633511545>')

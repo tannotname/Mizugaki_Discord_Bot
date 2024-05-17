@@ -87,7 +87,6 @@ class Voicenew(commands.Cog):
                 # 連接
                 conn = sqlite3.connect("voicenew.db")
                 cursor = conn.cursor()
-                print("資料庫連接成功4")
                 # 查詢
                 cursor.execute("SELECT * FROM newchannel")
                 rows = cursor.fetchall()

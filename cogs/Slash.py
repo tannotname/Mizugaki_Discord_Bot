@@ -113,31 +113,65 @@ class Slash(commands.Cog):
         else:
             await interaction.response.send_message("此伺服器禁用此功能")
 
-    @app_commands.command(name="新增動態文字頻道",description="新增屬於你的文字頻道")
+    @app_commands.command(name="新增動態文字_and_語音頻道",description="新增屬於你的頻道組合")
     async def newchannelyou(self,interaction:discord.Interaction,channelname:str):
         guild = interaction.guild
-        newchannel = await guild.create_text_channel(name=channelname,topic=f"屬於 {interaction.user.name} 與他的朋友們的專屬文字頻道,使用完畢記得刪除!請注意!扳手還是看的到此頻道")
+        newcategory = await guild.create_category(name=channelname,position=0)
+        newchannel = await guild.create_text_channel(name=channelname,category=newcategory,topic=f"屬於 {interaction.user.name} 與他的朋友們的專屬文字頻道,使用完畢記得刪除!請注意!扳手還是看的到此頻道")
+        newvoicechannel = await guild.create_voice_channel(name=channelname,category=newcategory,rtc_region="japan")
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False)
         }
-        await newchannel.edit(overwrites=overwrites)
-        await newchannel.set_permissions(interaction.user, manage_channels=True,read_messages=True)
+        await newcategory.edit(overwrites=overwrites)
+        await newcategory.set_permissions(interaction.user, manage_channels=True,read_messages=True)
+        try:
+            # 同步頻道權限
+            await newchannel.edit(sync_permissions=True)
+            await newvoicechannel.edit(sync_permissions=True)
+            print(f'頻道 {newchannel.name} 的權限已同步至分類 {newchannel.category.name}。')
+        except Exception as e:
+            print(f'同步頻道權限時發生錯誤：{e}')
+
         await interaction.user.send(f"""已創建專屬於你的文字頻道在: {interaction.guild.name} 
 現在快使用/給予你的朋友觀看頻道的權利吧! 
 頻道使用完畢請記得刪除 /刪除文字頻道""")
         await newchannel.send(f"""{interaction.user.mention}已創建專屬於你的文字頻道在: {interaction.guild.name} 
-現在快使用/給予你的朋友觀看頻道的權利吧! 
+現在快使用/給予你的朋友觀看頻道的權利吧!
 頻道使用完畢請記得刪除 /刪除文字頻道""")
 
     @app_commands.command(name="給予專屬頻道加入權限",description="給予專屬頻道加入權限")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def giveglass(self,interaction:discord.Interaction,username:discord.Member,channel:discord.TextChannel,give_or_out:bool):
+    async def giveglass(self,interaction:discord.Interaction,username:discord.Member,category:discord.CategoryChannel,give_or_out:bool):
         if give_or_out == True:
-            await channel.set_permissions(username, read_messages=True)
-            await interaction.response.send_message(f"已給予{username} 頻道 {channel.name} 觀看權限")
+            await category.set_permissions(username, read_messages=True)
+            channels = category.channels
+        if not channels:
+            print(f'分類 {category.name} 中沒有頻道。')
+            return
+        try:
+            # 同步每個頻道的權限
+            for channel in channels:
+                await channel.edit(sync_permissions=True)
+            print(f'分類 {category.name} 中的所有頻道權限已同步。')
+            await interaction.response.send_message(f"已給予{username} 頻道 {category.name} 觀看權限")
+        except Exception as e:
+            print(f'同步分類內頻道權限時發生錯誤：{e}')
         if give_or_out == False:
-            await channel.set_permissions(username, read_messages=False)
-            await interaction.response.send_message(f"已剝奪{username} 頻道 {channel.name} 觀看權限")
+            await category.set_permissions(username, read_messages=False)
+        if not channels:
+            print(f'分類 {category.name} 中沒有頻道。')
+            return
+        try:
+            # 同步每個頻道的權限
+            for channel in channels:
+                await channel.edit(sync_permissions=True)
+            print(f'分類 {category.name} 中的所有頻道權限已同步。')
+            await interaction.response.send_message(f"已剝奪{username} 頻道 {category.name} 觀看權限")
+        except Exception as e:
+            print(f'同步分類內頻道權限時發生錯誤：{e}')
+            
+
+    
 
 
 

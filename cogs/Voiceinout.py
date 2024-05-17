@@ -92,14 +92,14 @@ class Voiceinout(commands.Cog):
                 random8_int = random.randint(0, 255)
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="成員加入", description=f"{nickname} 從 {before.channel.name}移動過來", color= emb_color)
+                embed = discord.Embed(title="成員加入", description=f"{nickname} 降落!", color= emb_color)
                 await channel.send(embed=embed)
                 channel = before.channel
                 random7_int = random.randint(0, 255)
                 random8_int = random.randint(0, 255)
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="成員移動", description=f"{nickname} 移動到 {after.channel.name}", color= emb_color)
+                embed = discord.Embed(title="成員移動", description=f"{nickname} 被打飛了", color= emb_color)
                 await channel.send(embed=embed)
 
 
