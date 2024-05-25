@@ -4,6 +4,7 @@ import sqlite3
 import random
 import asyncio
 from discord.ext import commands
+import re
 
 ABC = "iso_4217"
 
@@ -20,7 +21,20 @@ if existing_table_count == 0:
 else:
     print("Table 'iso_4217' already exists.")
 
-
+emoji_pattern = re.compile(
+    '['
+    '\U0001F600-\U0001F64F'  # 表情符號
+    '\U0001F300-\U0001F5FF'  # 符號 & 圖標
+    '\U0001F680-\U0001F6FF'  # 交通 & 地點
+    '\U0001F700-\U0001F77F'  # 其他符號
+    '\U0001F780-\U0001F7FF'  # 擴展區塊
+    '\U0001F800-\U0001F8FF'  # 擴展區塊
+    '\U0001F900-\U0001F9FF'  # 表情 & 手勢
+    '\U0001FA00-\U0001FA6F'  # 表情符號附加區
+    '\U0001FA70-\U0001FAFF'  # 表情符號附加區
+    '\U00002702-\U000027B0'  # 符號 & 標誌
+    '\U000024C2-\U0001F251'
+    ']+', flags=re.UNICODE)
 
 class Event(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -37,6 +51,9 @@ class Event(commands.Cog):
         message_content = f'{message.content}'
         user = message.author
         iso4217 = 'iso4217'.lower()
+        
+        emojis = emoji_pattern.findall(message.content)
+        emoji_count = len(emojis)
 
         if message.author.name == 'tan_07_24':
             if '晚安' in message.content or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
@@ -109,7 +126,7 @@ class Event(commands.Cog):
             if message.content == '破盤':
                 await message.channel.send("https://tenor.com/view/%E5%B0%8F%E7%95%B6%E5%AE%B6-%E7%9B%A4%E5%AD%90-%E9%BE%8D%E8%9D%A6%E4%B8%89%E7%88%AD%E9%9C%B8-%E6%9D%8E%E5%9A%B4-gif-22898444")
 
-            if '我上課不專心' in message.content or '受夠台北的天氣' in message.content:
+            if '我上課不專心' in message.content or '受夠台北的天氣' in message.content or "呀嘞呀嘞" in message.content:
                 await message.delete()
             
             if '好啊沒關係啊' in message.content :
