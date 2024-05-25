@@ -1,8 +1,9 @@
-import datetime
 import discord
 from discord import app_commands
 from discord.ext import commands
-import asyncio
+from PIL import Image
+import os
+
 
 
 class Messagecommand(commands.Cog):
@@ -14,34 +15,40 @@ class Messagecommand(commands.Cog):
         )
         self.bot.tree.add_command(self.user_menu)
 
-        # Message context menu
         self.message_menu = app_commands.ContextMenu(
-            name="標雷諾",
-            callback=self.message_info
+            name="翻轉圖片",
+            callback=self.rotate
         )
         self.bot.tree.add_command(self.message_menu)
 
-        self.message_menu = app_commands.ContextMenu(
-            name="測試",
-            callback=self.test
-        )
-        self.bot.tree.add_command(self.message_menu)
 
 
     async def user_info(self, interaction: discord.Interaction, user: discord.User):
         """Handle the user context menu action."""
         await interaction.response.send_message(f'User: {user.name}\nID: {user.id}')
 
-    async def message_info(self, interaction: discord.Interaction, message: discord.Message):
-        if interaction.guild.id == 1213748875471364137:
-            await message.reply("<@557540063525994496>",mention_author=False)
-            await interaction.response.send_message("已執行命令",ephemeral=True)
-        else:
-            await interaction.response.send_message("此伺服器不支援此命令",ephemeral=True)
+    async def rotate(self, interaction:discord.Interaction,message:discord.Message):
+        try:
+            if message.attachments:
+                for attachment in message.attachments:
+                    try:
+                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
+                    except Exception as e:
+                        await interaction.response.send_message(f"發生儲存錯誤:{e}",ephemeral=True)
+                        return
+                    try:
+                        os.chdir('C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\')
+                    except Exception as e:
+                        await interaction.response.send_message(f"發生開啟錯誤:{e}",ephemeral=True)
+                    img = Image.open(f'{attachment.filename}')
+                    img_r1 = img.rotate(90,expand=1)
+                    img_r1.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
+                    await message.reply(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'),mention_author=False)
+                    os.remove(f'{attachment.filename}') 
+                    await interaction.response.send_message("已執行命令",ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"發生錯誤:{e}",ephemeral=True)
 
-    async def test(self, interaction:discord.Interaction,message:discord.Message):
-        await message.reply("測試",mention_author=False)
-        await interaction.response.send_message("已執行命令",ephemeral=True)
 
 
 async def setup(bot: commands.Bot):

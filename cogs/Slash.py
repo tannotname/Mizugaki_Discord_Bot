@@ -186,10 +186,10 @@ class Slash(commands.Cog):
     async def say(self,interaction:discord.Interaction,話:str):
         try:
             channel = interaction.channel
-            await channel.send(話)
+            await channel.send(f"# {話}")
             await interaction.response.send_message("已執行指令",ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"發生錯誤:{e}")
-            
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(Slash(bot))
