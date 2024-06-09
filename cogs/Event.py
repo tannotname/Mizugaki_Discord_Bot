@@ -5,21 +5,24 @@ import random
 import asyncio
 from discord.ext import commands
 import re
+from discord import app_commands
 
 ABC = "iso_4217"
 
-con = sqlite3.connect('wansunfapanpandiscordbot.db')
-cur = con.cursor()
-row = cur.fetchone()
-cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", (ABC,))
-existing_table_count = cur.fetchone()[0]
-    # 如果查询结果不为空
-if existing_table_count == 0:
-    cur.execute("CREATE TABLE iso_4217(name TEXT, code TEXT)")
+#drop table 
+con = sqlite3.connect('event.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("event",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+if row == 0:
+    cur.execute("CREATE TABLE event(eventguild NUMERIC,eventmessage TEXT,eventreply TEXT)")
     con.commit()
-    print("Table 'iso_4217' created successfully.")
+    print("表格 'event' 已建立.")
 else:
-    print("Table 'iso_4217' already exists.")
+    print("表格“event”已存在.")
+    con.commit()
 
 emoji_pattern = re.compile(
     '['
@@ -48,13 +51,7 @@ class Event(commands.Cog):
         #排除自己的訊息，避免陷入無限循環
         if message.author == self.bot.user:
             return
-        message_content = f'{message.content}'
-        user = message.author
-        iso4217 = 'iso4217'.lower()
         
-        emojis = emoji_pattern.findall(message.content)
-        emoji_count = len(emojis)
-
         if message.author.name == 'tan_07_24':
             if '晚安' in message.content or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                 replies = [
@@ -82,9 +79,6 @@ class Event(commands.Cog):
             #發送訊息，並將本次訊息資料存入tmpmsg，方便之後刪除
             await message.reply(random.choice(['早上好','不早了','都幾點了？還早？','早安']),mention_author=False)
 
-        if  message.content == '下班':
-            await message.reply(random.choice(['恭下','去加班','攻下']))
-
         if message.content == "&marry <@998929254265929788>" :
                 await asyncio.sleep(2)
                 await message.reply(random.choice(['喔！親愛的，我覺得你太好了，我配不上你！','你很好！但抱歉，我現在還不想結婚、進入婚姻！','比起當夫妻，我覺得我們當朋友會更適合！','很抱歉讓你誤會，但我真的把你當好朋友！','我真的也很喜歡你，但我覺得真的在一起會是個錯誤！','我已經看見在一起後未來會發生的問題，所以當朋友比較長久！','我相信你一定會找到更適合的人，我真的不適合你！']))
@@ -94,26 +88,18 @@ class Event(commands.Cog):
 
 
         # 以下為支援伺服器專用
-
+        can = sqlite3.connect("event.db")
+        car = can.cursor()
+        car.execute("SELECT * FROM event WHERE eventguild=?",(message.guild.id,))
+        rows = car.fetchall()
+        can.commit()
+        for row in rows:
+            if row[1] in message.content:
+                await message.channel.send(f"{row[2]}")
 
         if  message.guild.id == 1213748875471364137 or message.guild.id == 1238133524662325351:
             if message.content == """富婆養我""":
                 await message.channel.send('https://tenor.com/view/richfemale-gif-27270977')
-
-            if message.content == 'mch':
-                await message.channel.send('<a:modcheck:1227279045633511545>')
-
-            if message.content == 'wow':
-                await message.channel.send('<a:1007:1224395982746292487>')
-
-            if message.content == '心碎' or message.content == '心碎了':
-                await message.channel.send('<a:1006:1224397588418265088>')
-
-            if message.content == 'never give' or message.content == '瑞克搖' or message.content == 'bjo4dk4ul6':
-                await message.channel.send('<a:1010:1221281210588987464>')
-
-            if message.content == '雷盤':
-                await message.channel.send(random.choice(['<:_7867867678_66:1209737435026825226><:__76786786786786:1209737437585350656><:__28778278578:1209737445436956752><:__6786786786:1209737443339935774><:__678678678678:1209737439657197619><:__78678678678:1209737441477533776>','<:_7867867678_66:1209737435026825226><:__76786786786786:1209737437585350656><:__272782782578:1209737447601344565><:__6786786786:1209737443339935774><:__72782782:1209737449975054356>']))
 
             if message.content == '養我' or message.content == '月月養我' or message.content == '月月富婆養我' or "<@1055932398031884319> 我要跟你借錢" in message.content:
                 await message.reply('# は～！！りしれごんさ小 <:820914027559125002:1224396364411310172>')
@@ -132,12 +118,21 @@ class Event(commands.Cog):
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
 
-            if '半夜三點' in message.content or '美味蟹堡' in message.content :
-                await message.channel.send('https://tenor.com/view/patrick-star-eating-3am-sleep-up-for-food-gif-10318105')
-
-            if message.content == '歐洲人' :
-                await message.channel.send('https://tenor.com/view/cartoons-lion-king-prank-lol-fail-gif-4881393')
-
+    @app_commands.command(name="增加反應",description="增加機器人訊息反應")
+    @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
+    async def eventmessage(self,interaction:discord.Interaction,message:str,reply:str):
+        try:
+            con = sqlite3.connect("event.db")
+            cur = con.cursor()
+            cur.execute("INSERT INTO event (eventguild,eventmessage,eventreply) VALUES (?,?,?)",(interaction.guild.id,message,reply))
+            con.commit()
+            await interaction.response.send_message(f"{message},{reply} 存入")
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"{message},{reply} 存入")
+            con.close()
+            cur.close()
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}")
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
     await bot.add_cog(Event(bot))

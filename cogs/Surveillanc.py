@@ -1,10 +1,7 @@
 import datetime
 import random
-import time
 import discord
 from discord.ext import commands
-from discord.ext import tasks
-from discord import app_commands
 
 
 class Surveillanc(commands.Cog):
@@ -37,7 +34,12 @@ class Surveillanc(commands.Cog):
             if message.attachments:
                 for attachment in message.attachments:
                     # 發送圖片連結
-                    await channel.send(attachment)
+                    try:
+                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
+                    except Exception as e:
+                        print(f"發生儲存錯誤:{e}")
+                        return
+                    await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'))
 
 
 async def setup(bot: commands.Bot):

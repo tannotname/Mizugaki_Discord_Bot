@@ -19,10 +19,14 @@ class Severchannel(commands.Cog):
             guild = self.bot.get_guild(1243941520793407559)
             channel = self.bot.get_channel(976293837288906813)
             await channel.send(message1)
+            if message.attachments:
+                for attachment in message.attachments:
+                    # 發送圖片連結
+                    await channel.send(attachment)
             channel = self.bot.get_channel(1243941520793407559)
             await channel.send("發送成功")
 
-        if message1.guild.id == 976001041801805835:
+        if message.guild.id == 976001041801805835:
             channel = self.bot.get_channel(1243941520793407559)  # 替換 YOUR_CHANNEL_ID 為目標頻道的 ID
             random3_int = random.randint(0, 255)
             random4_int = random.randint(0, 255)
