@@ -139,9 +139,6 @@ class Event(commands.Cog):
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
 
-            if "<:IMG_1957:1245218178305495090>" in message.content:
-                await message.reply("# 不哭不哭~給你 :roll_of_paper:")
-
     @app_commands.command(name="增加反應",description="增加機器人訊息反應")
     @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
     async def eventmessage(self,interaction:discord.Interaction,message:str,reply:str):
