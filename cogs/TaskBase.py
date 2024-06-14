@@ -28,16 +28,11 @@ class TaskBase(commands.Cog):
             await self.bot.wait_until_ready()
             # 變更bot狀態
             slash = await self.bot.tree.sync()
-            await self.bot.change_presence(activity=discord.Game(name=f"載入 {len(slash)} 個斜線指令"))
+            await self.bot.change_presence(activity=discord.Game(name=f"/help|服務 {guilds} 個伺服器|{count} 位使用者|載入{len(slash)}個指令中"))
             
         except Exception as erro:
             # 錯誤輸出
             print(erro)
-
-
-
-        
-
 
     @app_commands.command(name = "delete_online", description = "清除機器人狀態")
     @app_commands.checks.has_permissions(manage_guild=True)

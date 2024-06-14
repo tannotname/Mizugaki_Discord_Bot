@@ -82,7 +82,7 @@ class Voicenew(commands.Cog):
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                     embed = discord.Embed(title="錯誤", color= emb_color)
                     embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-                    await interaction.response.send_message(embed=embed)
+                    await interaction.response.send_message(embed=embed) 
                 await interaction.response.send_message("已創建動態語音頻道,開始將您傳送過去")
         except Exception as e:
             random7_int = random.randint(0, 255)
@@ -91,7 +91,7 @@ class Voicenew(commands.Cog):
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="登入語音動態房",description="將語音房間設為動態刪除")
     @app_commands.checks.has_permissions(manage_channels=True)
@@ -111,28 +111,7 @@ class Voicenew(commands.Cog):
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-            await interaction.response.send_message(embed=embed)
-
-    @app_commands.command(name="保留語音動態房",description="將語音房間設為永久存留")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    async def delete_the_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
-        try:
-            channel_id = channel.id
-            con = sqlite3.connect("voicenew.db")
-            cur = con.cursor()
-            cur.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,))
-            con.commit()
-            cur.close()
-            con.close()
-            await interaction.response.send_message("已保存指定頻道")
-        except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed) 
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -150,27 +129,27 @@ class Voicenew(commands.Cog):
             try:
                 for row in rows:
                     print(f"{member.display_name} 加入 {after.channel.name}")
-                if after.channel.id == row[4]:
-                    guild = member.guild
-                    category = after.channel.category
-                    newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan")
-                    print(f"已創建 {newchannel.name} 在 {category.name}")
-                    await member.move_to(newchannel)
-                    print(f"已移動 {member.display_name} 到 {newchannel.name}")
-                    try:
-                        await newchannel.set_permissions(member, manage_channels=True)
-                        print(f"已給予{member.name} {newchannel.name} 的管理權限")              
-                    except:
-                        print("給予權限時發生未知錯誤")
-                    try:
-                        conn = sqlite3.connect('voicenew.db')
-                        print("資料庫連接成功")
-                        cur = conn.cursor()
-                        cur.execute("INSERT INTO newchannel (channelname, channelid) VALUES (?, ?)", (newchannel.name, newchannel.id))
-                        conn.commit()
-                        conn.close()
-                    except sqlite3.Error as e:
-                        print(f"資料庫連接時發生錯誤: {e}")
+                    if after.channel.id == row[4]:
+                        guild = member.guild
+                        category = after.channel.category
+                        newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan")
+                        print(f"已創建 {newchannel.name} 在 {category.name}")
+                        await member.move_to(newchannel)
+                        print(f"已移動 {member.display_name} 到 {newchannel.name}")
+                        try:
+                            await newchannel.set_permissions(member, manage_channels=True)
+                            print(f"已給予{member.name} {newchannel.name} 的管理權限")              
+                        except:
+                            print("給予權限時發生未知錯誤")
+                        try:
+                            conn = sqlite3.connect('voicenew.db')
+                            print("資料庫連接成功")
+                            cur = conn.cursor()
+                            cur.execute("INSERT INTO newchannel (channelname, channelid) VALUES (?, ?)", (newchannel.name, newchannel.id))
+                            conn.commit()
+                            conn.close()
+                        except sqlite3.Error as e:
+                            print(f"資料庫連接時發生錯誤: {e}")
             except Exception as e:
                 await after.channel.send(f"錯誤:{e}")
 
@@ -198,7 +177,7 @@ class Voicenew(commands.Cog):
 
             except sqlite3.Error as e:
                 print(f"資料庫連接時發生錯誤4: {e}")
-    
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Voicenew(bot))

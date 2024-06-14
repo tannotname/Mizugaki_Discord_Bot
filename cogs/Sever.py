@@ -1,3 +1,4 @@
+import random
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -14,7 +15,10 @@ class Sever(commands.Cog):
                 guilds = self.bot.guilds
                 lite = "機器人加入伺服器連結：\n\n"
                 for guild in guilds: 
-                    invites = await guild.invites()
+                    try:
+                        invites = await guild.invites()
+                    except Exception as e:
+                        lite += f"{guild.name} {guild.id} 錯誤:{e}\n"
                     if invites:
                         invite_url = invites[0].url
                         lite += f"Invite for {guild.name} {guild.id}: {invite_url}\n"
@@ -45,6 +49,24 @@ class Sever(commands.Cog):
                     await interaction.response.send_message("錯誤guild為None",ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_guild_join(self,guild: discord.Guild):
+        channel = self.bot.get_channel(1243941520793407559)
+        try:
+            guildurl = await guild.invites()
+        except Exception as e:
+            guildurl = f"No invite found:{e}"
+        await channel.send(f"```\n機器人進入伺服器:{guild.name} {guild.id}\n{guildurl}\n```")
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self,guild: discord.Guild):
+        channel = self.bot.get_channel(1243941520793407559)
+        try:
+            guildurl = await guild.invites()
+        except Exception as e:
+            guildurl = f"No invite found:{e}"
+        await channel.send(f"```\n機器人離開伺服器:{guild.name} {guild.id}\n{guildurl}\n``` ")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Sever(bot))

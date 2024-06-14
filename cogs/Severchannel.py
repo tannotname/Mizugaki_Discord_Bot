@@ -28,18 +28,7 @@ class Severchannel(commands.Cog):
 
         if message.guild.id == 976001041801805835:
             channel = self.bot.get_channel(1243941520793407559)  # 替換 YOUR_CHANNEL_ID 為目標頻道的 ID
-            random3_int = random.randint(0, 255)
-            random4_int = random.randint(0, 255)
-            random5_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random3_int, random4_int, random5_int)
-            embed = discord.Embed(title='跨服聊天',
-                                description=f'{message.content}',
-                                color=emb_color,
-                                timestamp=datetime.datetime.now())
-            embed.add_field(name='發送人', value=f"{message.author.avatar}\n{message.author.name}({message.author.nick if message.author.nick else message.author.name})", inline=False)
-            embed.add_field(name='發送頻道', value=message.channel, inline=False)
-            embed.add_field(name='發送伺服器', value=message.guild.name, inline=False)
-            await channel.send(embed=embed)
+            await channel.send(f"```\n{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}({message.guild.name})\n{message.content}```")
             if message.attachments:
                 for attachment in message.attachments:
                     # 發送圖片連結

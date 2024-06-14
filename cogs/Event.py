@@ -24,6 +24,24 @@ else:
     print("表格“event”已存在.")
     con.commit()
 
+def check_if_guild(interaction: discord.Interaction) -> bool:
+    return interaction.guild.id == 1238133524662325351
+
+#drop table 
+con = sqlite3.connect('myserver.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("myserver",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+if row == 0:
+    cur.execute("CREATE TABLE myserver(myserverguild NUMERIC,myservermessage TEXT,myserverreply TEXT)")
+    con.commit()
+    print("表格 'myserver' 已建立.")
+else:
+    print("表格“myserver”已存在.")
+    con.commit()
+
 emoji_pattern = re.compile(
     '['
     '\U0001F600-\U0001F64F'  # 表情符號
@@ -87,7 +105,7 @@ class Event(commands.Cog):
             await message.reply("https://cdn.discordapp.com/attachments/1226176299647893575/1241067493448089783/IMG_0488.jpg?ex=6648d9ac&is=6647882c&hm=1e02c6ab7f6b2d0429095c8e44d198e1a61a65d618afaaf9d75055aa789c49b8&")
 
 
-        # 以下為支援伺服器專用
+      
         can = sqlite3.connect("event.db")
         car = can.cursor()
         car.execute("SELECT * FROM event WHERE eventguild=?",(message.guild.id,))
@@ -97,26 +115,32 @@ class Event(commands.Cog):
             if row[1] in message.content:
                 await message.channel.send(f"{row[2]}")
 
-        if  message.guild.id == 1213748875471364137 or message.guild.id == 1238133524662325351:
-            if message.content == """富婆養我""":
-                await message.channel.send('https://tenor.com/view/richfemale-gif-27270977')
+        # 以下為支援伺服器專用
+        if  message.guild.id == 1238133524662325351:
 
-            if message.content == '養我' or message.content == '月月養我' or message.content == '月月富婆養我' or "<@1055932398031884319> 我要跟你借錢" in message.content:
-                await message.reply('# は～！！りしれごんさ小 <:820914027559125002:1224396364411310172>')
+            cao = sqlite3.connect("myserver.db")
+            cor = cao.cursor()
+            cor.execute("SELECT * FROM myserver WHERE myserverguild=?",(message.guild.id,))
+            raws = cor.fetchall()
+            cao.commit()
+            for raw in raws:
+                if message.content == raw[1]:
+                    await message.channel.send(f"{raw[2]}")
+
 
             if message.content == '毯毯養我':
                 await message.channel.send('<:worryCoffee:416636282324910100>')
                 await asyncio.sleep(1)
                 await message.reply(0)
 
-            if message.content == '破盤':
-                await message.channel.send("https://tenor.com/view/%E5%B0%8F%E7%95%B6%E5%AE%B6-%E7%9B%A4%E5%AD%90-%E9%BE%8D%E8%9D%A6%E4%B8%89%E7%88%AD%E9%9C%B8-%E6%9D%8E%E5%9A%B4-gif-22898444")
-
             if '我上課不專心' in message.content or '受夠台北的天氣' in message.content or "呀嘞呀嘞" in message.content:
                 await message.delete()
             
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
+
+            if "<:IMG_1957:1245218178305495090>" in message.content:
+                await message.reply("# 不哭不哭~給你 :roll_of_paper:")
 
     @app_commands.command(name="增加反應",description="增加機器人訊息反應")
     @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
@@ -132,13 +156,25 @@ class Event(commands.Cog):
             con.close()
             cur.close()
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(f"錯誤:{e}")
+
+    @app_commands.command(name="myservermessage",description="增加本伺服器專屬訊息反應")
+    @app_commands.check(check_if_guild)
+    @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
+    async def myservermessage(self,interaction:discord.Interaction,message:str,reply:str):
+        try:
+            con = sqlite3.connect("myserver.db")
+            cur = con.cursor()
+            cur.execute("INSERT INTO myserver (myserverguild,myservermessage,myserverreply) VALUES (?,?,?)",(interaction.guild.id,message,reply))
+            con.commit()
+            await interaction.response.send_message(f"{message},{reply} 存入")
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"{message},{reply} 存入")
+            con.close()
+            cur.close()
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}")
+
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
     await bot.add_cog(Event(bot))
