@@ -22,7 +22,13 @@ class Sever(commands.Cog):
                         lite += f"No invite found for {guild.name} {guild.id}\n"
                 await interaction.response.send_message(lite,ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="sever_channel",description="列出伺服器頻道")
     async def sever_channel(self,interaction:discord.Interaction,guildid:str):

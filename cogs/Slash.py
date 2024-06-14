@@ -231,7 +231,13 @@ class Slash(commands.Cog):
             await interaction.response.send_message("已開始錄音")
         
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="stop_record",description="讓機器人停止錄音並離開語音")
     async def stoprecord(self,interaction:discord.Interaction):
@@ -244,7 +250,13 @@ class Slash(commands.Cog):
             await guild.voice_client.disconnect()
             await interaction.response.send_message("結束錄音")
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")"""
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)"""
 
     @app_commands.command(name="ban",description="停權使用者")
     @app_commands.checks.has_permissions(administrator=True)
@@ -253,7 +265,13 @@ class Slash(commands.Cog):
             await member.ban()
             await interaction.response.send_message(f"已封鎖{member.name}")
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="ὀστρακισμός",description="放逐指定成員")
     @app_commands.checks.has_permissions(administrator=True)
@@ -262,7 +280,13 @@ class Slash(commands.Cog):
             await member.kick()
             await interaction.response.send_message(f"已放逐指定成員{member.name}")
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="複製伺服器頻道",description="複製所選的伺服器所有頻道")
     @app_commands.checks.has_permissions(administrator=True)
@@ -274,20 +298,44 @@ class Slash(commands.Cog):
                 for category in guild.categories:
                     await guild2.create_category(name=category.name)
             except Exception as e:
-                await interaction.response.send_message(f"錯誤:{e}")
+                random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
             try:
                 for channel in guild.text_channels:
                     await guild2.create_text_channel(name=channel.name, category=channel.category)
             except Exception as e:
-                await interaction.response.send_message(f"錯誤:{e}")
+                random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
             try:
                 for channel in guild.voice_channels:
                     await guild2.create_voice_channel(name=channel.name, category=channel.category)
             except Exception as e:
-                await interaction.response.send_message(f"錯誤:{e}")
+                random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
             await interaction.response.send_message("執行",ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="新增文字_and_語音頻道",description="新增頻道組合")
     @app_commands.checks.has_permissions(administrator=True)
@@ -306,7 +354,13 @@ class Slash(commands.Cog):
             await guild.create_text_channel(name=channelname,category=category)
             await interaction.response.send_message("執行",ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="新的表情符號",description="新增表情符號")
     async def newemoji(self,interaction:discord.Interaction,newemoji:discord.Attachment,emojiname:str):
@@ -327,7 +381,13 @@ class Slash(commands.Cog):
                     emoji = await interaction.guild.create_custom_emoji(name=emojiname2, image=image_data)
                     await interaction.response.send_message(f"成功新增表情符號: <:{emoji.name}:{emoji.id}>")
             except Exception as e:
-                await interaction.response.send_message(f"錯誤:{e}")
+                random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
                 
     @app_commands.command(name="隱藏語音頻道",description="隱藏語音頻道並只讓當前在於頻道內的人可見該頻道")
     async def hide_voice_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
@@ -342,7 +402,32 @@ class Slash(commands.Cog):
                 membername += f"{member.name},"
             await interaction.response.send_message(f"{membername}觀看權限",ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="voting",description="幫機器人投票")
+    async def botVoting(self,interaction:discord.Interaction):
+        try:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="幫機器人投票", color= emb_color)
+            embed.add_field(name="https://top.gg/bot/998929254265929788/vote",value="",inline=False)
+            await interaction.response.send_message(embed=embed) 
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed) 
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Slash(bot))

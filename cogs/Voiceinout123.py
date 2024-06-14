@@ -84,7 +84,7 @@ class Voiceinout123(commands.Cog):
                 # 選擇回覆
             reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
             embed = discord.Embed(title="成員離開", description=reply, color= emb_color)
-            embed.add_field(name='加入頻道', value=before.channel.name, inline=False)
+            embed.add_field(name='離開頻道', value=before.channel.name, inline=False)
             embed.add_field(name='伺服器', value=member.guild.name, inline=False)
             await channel.send(embed=embed)
         elif before.channel != after.channel:

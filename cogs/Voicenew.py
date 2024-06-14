@@ -1,3 +1,4 @@
+import random
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -75,12 +76,24 @@ class Voicenew(commands.Cog):
                     conn.commit()
                     conn.close()
                 except sqlite3.Error as e:
-                    await interaction.response.send_message(f"錯誤:{e}")
+                    random7_int = random.randint(0, 255)
+                    random8_int = random.randint(0, 255)
+                    random9_int = random.randint(0, 255)
+                    emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                    embed = discord.Embed(title="錯誤", color= emb_color)
+                    embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+                    await interaction.response.send_message(embed=embed)
                 await interaction.response.send_message("已創建動態語音頻道,開始將您傳送過去")
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="保留語音動態房",description="將語音房間設為永久存留")
+    @app_commands.command(name="登入語音動態房",description="將語音房間設為動態刪除")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def Retain_the_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
         try:
@@ -92,11 +105,17 @@ class Voicenew(commands.Cog):
             con.close()
             await interaction.response.send_message("已登入指定頻道")
         except sqlite3.Error as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="登入語音動態房",description="將語音房間設為動態刪除")
+    @app_commands.command(name="保留語音動態房",description="將語音房間設為永久存留")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def Retain_the_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
+    async def delete_the_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
         try:
             channel_id = channel.id
             con = sqlite3.connect("voicenew.db")
@@ -107,7 +126,13 @@ class Voicenew(commands.Cog):
             con.close()
             await interaction.response.send_message("已保存指定頻道")
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
