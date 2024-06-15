@@ -35,27 +35,12 @@ cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?
 row = cur.fetchone()[0]
     # 查詢資料庫是否存在
 if row == 0:
-    cur.execute("CREATE TABLE myserver(myserverguild NUMERIC,myservermessage TEXT,myserverreply TEXT)")
+    cur.execute("CREATE TABLE myserver(myserverguild NUMERIC,myservermessage TEXT,myserverreply TEXT,user TEXT)")
     con.commit()
     print("表格 'myserver' 已建立.")
 else:
     print("表格“myserver”已存在.")
     con.commit()
-
-emoji_pattern = re.compile(
-    '['
-    '\U0001F600-\U0001F64F'  # 表情符號
-    '\U0001F300-\U0001F5FF'  # 符號 & 圖標
-    '\U0001F680-\U0001F6FF'  # 交通 & 地點
-    '\U0001F700-\U0001F77F'  # 其他符號
-    '\U0001F780-\U0001F7FF'  # 擴展區塊
-    '\U0001F800-\U0001F8FF'  # 擴展區塊
-    '\U0001F900-\U0001F9FF'  # 表情 & 手勢
-    '\U0001FA00-\U0001FA6F'  # 表情符號附加區
-    '\U0001FA70-\U0001FAFF'  # 表情符號附加區
-    '\U00002702-\U000027B0'  # 符號 & 標誌
-    '\U000024C2-\U0001F251'
-    ']+', flags=re.UNICODE)
 
 class Event(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -117,18 +102,19 @@ class Event(commands.Cog):
 
         # 以下為支援伺服器專用
         if  message.guild.id == 1238133524662325351:
+            try:
+                cao = sqlite3.connect("myserver.db")
+                cor = cao.cursor()
+                cor.execute("SELECT * FROM myserver WHERE myserverguild=?",(message.guild.id,))
+                raws = cor.fetchall()
+                cao.commit()
+                for raw in raws:
+                    if message.content == raw[1]:
+                        await message.channel.send(f"{raw[2]}")
+            except Exception as e:
+                channel = self.bot.get_channel(1064943718014124142)
+                await channel.send(f"錯誤:{e}")
 
-            can = sqlite3.connect("myserver.db")
-            car = can.cursor()
-            car.execute("SELECT * FROM event WHERE myserverguild=?",(message.guild.id,))
-            rows = car.fetchall()
-            can.commit()
-            for row in rows:
-                if row[1] in message.content:
-                    await message.channel.send(f"{row[2]}")
-
-            if message.content == '養我' or message.content == '月月養我' or message.content == '月月富婆養我' or "<@1055932398031884319> 我要跟你借錢" in message.content:
-                await message.reply('# は～！！りしれごんさ小 <:820914027559125002:1224396364411310172>')
 
             if message.content == '毯毯養我':
                 await message.channel.send('<:worryCoffee:416636282324910100>')
@@ -140,9 +126,6 @@ class Event(commands.Cog):
             
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
-
-            if "<:IMG_1957:1245218178305495090>" in message.content:
-                await message.reply("# 不哭不哭~給你 :roll_of_paper:")
 
     @app_commands.command(name="增加反應",description="增加機器人訊息反應")
     @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
@@ -171,15 +154,18 @@ class Event(commands.Cog):
     @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
     async def myservermessage(self,interaction:discord.Interaction,message:str,reply:str):
         try:
-            con = sqlite3.connect("myserver.db")
-            cur = con.cursor()
-            cur.execute("INSERT INTO myserver (myserverguild,myservermessage,myserverreply) VALUES (?,?,?)",(interaction.guild.id,message,reply))
-            con.commit()
-            await interaction.response.send_message(f"{message},{reply} 存入")
-            channel = self.bot.get_channel(1064943718014124142)
-            await channel.send(f"{message},{reply} 存入")
-            con.close()
-            cur.close()
+            if interaction.user.id != 966291389522530365:
+                con = sqlite3.connect("myserver.db")
+                cur = con.cursor()
+                cur.execute("INSERT INTO myserver (myserverguild,myservermessage,myserverreply,user) VALUES (?,?,?)",(interaction.guild.id,message,reply,interaction.user.name))
+                con.commit()
+                await interaction.response.send_message(f"{message},{reply} 存入")
+                channel = self.bot.get_channel(1064943718014124142)
+                await channel.send(f"{interaction.user.name}新增{message},{reply} 存入")
+                con.close()
+                cur.close()
+            else:
+                await interaction.response.send_message(f"{message},{reply} 存入")
         except Exception as e:
             random7_int = random.randint(0, 255)
             random8_int = random.randint(0, 255)
