@@ -118,15 +118,17 @@ class Event(commands.Cog):
         # 以下為支援伺服器專用
         if  message.guild.id == 1238133524662325351:
 
-            cao = sqlite3.connect("myserver.db")
-            cor = cao.cursor()
-            cor.execute("SELECT * FROM myserver WHERE myserverguild=?",(message.guild.id,))
-            raws = cor.fetchall()
-            cao.commit()
-            for raw in raws:
-                if message.content == raw[1]:
-                    await message.channel.send(f"{raw[2]}")
+            can = sqlite3.connect("myserver.db")
+            car = can.cursor()
+            car.execute("SELECT * FROM event WHERE myserverguild=?",(message.guild.id,))
+            rows = car.fetchall()
+            can.commit()
+            for row in rows:
+                if row[1] in message.content:
+                    await message.channel.send(f"{row[2]}")
 
+            if message.content == '養我' or message.content == '月月養我' or message.content == '月月富婆養我' or "<@1055932398031884319> 我要跟你借錢" in message.content:
+                await message.reply('# は～！！りしれごんさ小 <:820914027559125002:1224396364411310172>')
 
             if message.content == '毯毯養我':
                 await message.channel.send('<:worryCoffee:416636282324910100>')
@@ -138,6 +140,9 @@ class Event(commands.Cog):
             
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
+
+            if "<:IMG_1957:1245218178305495090>" in message.content:
+                await message.reply("# 不哭不哭~給你 :roll_of_paper:")
 
     @app_commands.command(name="增加反應",description="增加機器人訊息反應")
     @app_commands.describe(message = "偵測訊息",reply = "回復訊息")
@@ -153,7 +158,13 @@ class Event(commands.Cog):
             con.close()
             cur.close()
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="myservermessage",description="增加本伺服器專屬訊息反應")
     @app_commands.check(check_if_guild)
@@ -170,7 +181,13 @@ class Event(commands.Cog):
             con.close()
             cur.close()
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            await interaction.response.send_message(embed=embed) 
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
