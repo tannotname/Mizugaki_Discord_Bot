@@ -69,8 +69,7 @@ class Surveillanc(commands.Cog):
                 await channel.send(f"# 監測訊息\n```\n發送人:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}\n訊息內容:\n{message.content}```")
                 if message.attachments:
                     for attachment in message.attachments:
-                        # 發送圖片連結
-                        await channel.send(attachment)
+                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1064943718014124142)
             await channel.send(f"錯誤:{e}")
@@ -99,7 +98,7 @@ class Surveillanc(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="look_transmission_channel",description="查看監測訊息傳送頻道")
@@ -119,7 +118,7 @@ class Surveillanc(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
 

@@ -90,7 +90,7 @@ class Voicenew(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="登入語音動態房",description="將語音房間設為動態刪除")
@@ -110,7 +110,7 @@ class Voicenew(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @commands.Cog.listener()
@@ -128,8 +128,8 @@ class Voicenew(commands.Cog):
                 await after.channel.send(f"錯誤:{e}")
             try:
                 for row in rows:
-                    print(f"{member.display_name} 加入 {after.channel.name}")
                     if after.channel.id == row[4]:
+                        print(f"{member.display_name} 加入 {after.channel.name}")
                         guild = member.guild
                         category = after.channel.category
                         newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan")

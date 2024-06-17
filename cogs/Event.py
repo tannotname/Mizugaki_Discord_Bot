@@ -146,7 +146,7 @@ class Event(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="myservermessage",description="增加本伺服器專屬訊息反應")
@@ -157,7 +157,7 @@ class Event(commands.Cog):
             if interaction.user.id != 966291389522530365:
                 con = sqlite3.connect("myserver.db")
                 cur = con.cursor()
-                cur.execute("INSERT INTO myserver (myserverguild,myservermessage,myserverreply,user) VALUES (?,?,?)",(interaction.guild.id,message,reply,interaction.user.name))
+                cur.execute("INSERT INTO myserver (myserverguild,myservermessage,myserverreply,user) VALUES (?,?,?,?)",(interaction.guild.id,message,reply,interaction.user.name))
                 con.commit()
                 await interaction.response.send_message(f"{message},{reply} 存入")
                 channel = self.bot.get_channel(1064943718014124142)
@@ -172,8 +172,8 @@ class Event(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
-            await interaction.response.send_message(embed=embed) 
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
