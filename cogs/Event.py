@@ -42,6 +42,23 @@ else:
     print("表格“myserver”已存在.")
     con.commit()
 
+
+
+#drop table 
+cer = sqlite3.connect('userbool.db') # 連線資料庫
+coo = cer.cursor() # 建立游標
+ # 查詢第一筆資料
+coo.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("userbool",))
+row = coo.fetchone()[0]
+    # 查詢資料庫是否存在
+if row == 0:
+    coo.execute("CREATE TABLE userbool(username TEXT,user_id NUMERIC)")
+    cer.commit()
+    print("表格 'userbool' 已建立.")
+else:
+    print("表格“userbool”已存在.")
+    cer.commit()
+
 class Event(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -89,32 +106,55 @@ class Event(commands.Cog):
         if "看開了" in message.content:
             await message.reply("https://cdn.discordapp.com/attachments/1226176299647893575/1241067493448089783/IMG_0488.jpg?ex=6648d9ac&is=6647882c&hm=1e02c6ab7f6b2d0429095c8e44d198e1a61a65d618afaaf9d75055aa789c49b8&")
 
-
-    """
-        can = sqlite3.connect("event.db")
-        car = can.cursor()
-        car.execute("SELECT * FROM event WHERE eventguild=?",(message.guild.id,))
-        rows = car.fetchall()
-        can.commit()
+        try:
+            conn = sqlite3.connect("userbool.db")
+            comn = conn.cursor()
+            comn.execute("SELECT * FROM userbool WHERE user_id=?",(message.author.id,))
+            rows = comn.fetchall()
+            conn.commit()
+            comn.close()
+            conn.close()
+        except sqlite3.Error as e:
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"錯誤:{e}")
         for row in rows:
-            if row[1] in message.content:
-                await message.channel.send(f"{row[2]}")
+            if message.author.id == row[1]:
+                can = sqlite3.connect("event.db")
+                car = can.cursor()
+                car.execute("SELECT * FROM event WHERE eventguild=?",(message.guild.id,))
+                rows = car.fetchall()
+                can.commit()
+                for row in rows:
+                    if row[1] in message.content:
+                        await message.channel.send(f"{row[2]}")
 
         # 以下為支援伺服器專用
         if  message.guild.id == 1238133524662325351:
             try:
-                cao = sqlite3.connect("myserver.db")
-                cor = cao.cursor()
-                cor.execute("SELECT * FROM myserver WHERE myserverguild=?",(message.guild.id,))
-                raws = cor.fetchall()
-                cao.commit()
-                for raw in raws:
-                    if message.content == raw[1]:
-                        await message.channel.send(f"{raw[2]}")
-            except Exception as e:
+                try:
+                    conn = sqlite3.connect("userbool.db")
+                    comn = conn.cursor()
+                    comn.execute("SELECT * FROM userbool WHERE user_id=?",(message.author.id,))
+                    rows = comn.fetchall()
+                    conn.commit()
+                    comn.close()
+                    conn.close()
+                except sqlite3.Error as e:
+                    channel = self.bot.get_channel(1064943718014124142)
+                    await channel.send(f"錯誤:{e}")
+                for row in rows:
+                    if message.author.id == row[1]:
+                        cao = sqlite3.connect("myserver.db")
+                        cor = cao.cursor()
+                        cor.execute("SELECT * FROM myserver WHERE myserverguild=?",(message.guild.id,))
+                        raws = cor.fetchall()
+                        cao.commit()
+                        for raw in raws:
+                            if message.content == raw[1]:
+                                await message.channel.send(f"{raw[2]}")
+            except sqlite3.Error as e:
                 channel = self.bot.get_channel(1064943718014124142)
                 await channel.send(f"錯誤:{e}")
-
 
             if message.content == '毯毯養我':
                 await message.channel.send('<:worryCoffee:416636282324910100>')
@@ -147,7 +187,7 @@ class Event(commands.Cog):
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
-            await interaction.response.send_message(embed=embed) 
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="myservermessage",description="增加本伺服器專屬訊息反應")
     @app_commands.check(check_if_guild)
@@ -174,7 +214,29 @@ class Event(commands.Cog):
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed)
-    """
+
+    @app_commands.command(name="usermessage",description="註冊訊息反應服務(早安晚安不在此限)")
+    async def usermessage(self,interaction:discord.Interaction,yes_or_no:str):
+        try:
+            con = sqlite3.connect("userbool.db")
+            cur = con.cursor()
+            cur.execute("INSERT INTO userbool (username,user_id) VALUES (?,?)",(interaction.user.name,interaction.user.id))
+            con.commit()
+            await interaction.response.send_message(f"已將您的訊息反應設為啟用",ephemeral=True)
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"{interaction.user.name} 已將訊息反應設為啟用")
+            con.close()
+            cur.close()
+
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            await interaction.response.send_message(embed=embed)
+    
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):

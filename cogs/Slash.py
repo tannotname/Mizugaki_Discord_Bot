@@ -80,11 +80,6 @@ class Slash(commands.Cog):
                     await interaction.response.send_message('無效的貨幣代碼')
             else:
                 await interaction.response.send_message('無法獲取匯率數據')
-    
-    @app_commands.command(name = "upfile", description = "讓機器人幫你傳送訊息並提及全部人")
-    async def upfile(self,interaction: discord.Interaction,file: Optional[discord.Attachment],file2:Optional[discord.Attachment] ,say:str):
-        await interaction.response.send_message(f"@everyone {say} {file} {file2}")
-
 
     @app_commands.command(name="新增動態文字_and_語音頻道",description="新增屬於你的頻道組合")
     async def newchannelyou(self,interaction:discord.Interaction,channelname:str):
@@ -201,9 +196,14 @@ class Slash(commands.Cog):
     @app_commands.command(name="say",description="讓機器人幫你說話")
     async def say(self,interaction:discord.Interaction,話:str):
         try:
-            channel = interaction.channel
-            await channel.send(f"{話}")
-            await interaction.response.send_message("已執行指令",ephemeral=True)
+            if "@" in 話:
+                await interaction.response.send_message(f"{interaction.user.name} {"別想用我@人"}")
+            else:
+                channel = interaction.channel
+                await channel.send(f"{話}")
+                channel = self.bot.get_channel(1064943718014124142)
+                await channel.send(f"{interaction.user.name} 使用:{話}")
+                await interaction.response.send_message("已執行指令",ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"發生錯誤:{e}")
 
