@@ -56,7 +56,7 @@ class Event(commands.Cog):
             return
         
         if message.author.name == 'tan_07_24':
-            if '晚安' in message.content or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
+            if ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                 replies = [
                         ('睡你麻痺 起來嗨', 0.1),
                         ('晚安', 0.6),
@@ -65,7 +65,7 @@ class Event(commands.Cog):
                 # 選擇回覆
                 reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
                 await message.reply(reply,mention_author=False)
-        elif  '晚安' in message.content or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
+        elif  ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                 replies = [
                         ('睡你麻痺 起來嗨', 0.2),
                         ('晚安', 0.7),
@@ -90,7 +90,7 @@ class Event(commands.Cog):
             await message.reply("https://cdn.discordapp.com/attachments/1226176299647893575/1241067493448089783/IMG_0488.jpg?ex=6648d9ac&is=6647882c&hm=1e02c6ab7f6b2d0429095c8e44d198e1a61a65d618afaaf9d75055aa789c49b8&")
 
 
-      
+    """
         can = sqlite3.connect("event.db")
         car = can.cursor()
         car.execute("SELECT * FROM event WHERE eventguild=?",(message.guild.id,))
@@ -174,6 +174,7 @@ class Event(commands.Cog):
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed)
+    """
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
