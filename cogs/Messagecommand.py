@@ -32,18 +32,18 @@ class Messagecommand(commands.Cog):
             if message.attachments:
                 for attachment in message.attachments:
                     try:
-                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
+                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\{attachment.filename}')
                     except Exception as e:
                         await interaction.response.send_message(f"發生儲存錯誤:{e}",ephemeral=True)
                         return
                     try:
-                        os.chdir('C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\')
+                        os.chdir('C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\')
                     except Exception as e:
                         await interaction.response.send_message(f"發生開啟錯誤:{e}",ephemeral=True)
                     img = Image.open(f'{attachment.filename}')
                     img_r1 = img.rotate(90,expand=1)
-                    img_r1.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
-                    await message.reply(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'),mention_author=False)
+                    img_r1.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\{attachment.filename}')
+                    await message.reply(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\{attachment.filename}'),mention_author=False)
                     os.remove(f'{attachment.filename}') 
                     await interaction.response.send_message("已執行命令",ephemeral=True)
         except Exception as e:

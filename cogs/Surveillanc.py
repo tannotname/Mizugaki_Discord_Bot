@@ -51,11 +51,11 @@ class Surveillanc(commands.Cog):
                 for attachment in message.attachments:
                     # 發送圖片連結
                     try:
-                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}')
+                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}')
                     except Exception as e:
                         print(f"發生儲存錯誤:{e}")
                         return
-                    await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'))
+                    await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
 
         try:
             can = sqlite3.connect("surveillanc.db")
@@ -66,10 +66,10 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 channelid = row[3]
                 channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測訊息\n```\n發送人:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}\n訊息內容:\n{message.content}```")
+                await channel.send(f"# 監測訊息\n```\n發送人:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}\n訊息內容:\n```{message.content}")
                 if message.attachments:
                     for attachment in message.attachments:
-                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{attachment.filename}'))
+                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1064943718014124142)
             await channel.send(f"錯誤:{e}")

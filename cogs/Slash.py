@@ -192,6 +192,19 @@ class Slash(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"報錯:{e}",ephemeral=True)
 
+    @app_commands.command(name="giverole",description="給予或移除伺服器成員新的身分組")
+    async def user12365478(self,interaction:discord.Interaction,role:discord.Role,member:discord.Member,out_give:bool):
+        try:
+            if interaction.user.name == "tan_07_24":
+                if out_give == True:
+                    await member.add_roles(role)
+                    await interaction.response.send_message(f"已給予{member.nick} {role.name} 身分組",ephemeral=True)
+                else:
+                    await member.remove_roles(role)
+                    await interaction.response.send_message(f"已刪除{member.nick} 的 {role} 身分組")
+        except Exception as e:
+            await interaction.response.send_message(f"報錯:{e}",ephemeral=True)
+
 
     @app_commands.command(name="say",description="讓機器人幫你說話")
     async def say(self,interaction:discord.Interaction,話:str):

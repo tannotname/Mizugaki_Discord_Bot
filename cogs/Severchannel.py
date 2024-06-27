@@ -28,7 +28,7 @@ class Severchannel(commands.Cog):
 
         if message.guild.id == 976001041801805835:
             channel = self.bot.get_channel(1243941520793407559)  # 替換 YOUR_CHANNEL_ID 為目標頻道的 ID
-            await channel.send(f"```\n{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}({message.guild.name})\n{message.content}```")
+            await channel.send(f"```\n{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}({message.guild.name})\n```{message.content}")
             if message.attachments:
                 for attachment in message.attachments:
                     # 發送圖片連結
