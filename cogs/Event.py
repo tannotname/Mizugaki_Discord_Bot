@@ -72,6 +72,17 @@ class Event(commands.Cog):
         if message.author == self.bot.user:
             return
         
+        if "https://www.instagram.com/" in message.content :
+            try:
+                url = message.content
+                end = url.replace("https://www.instagram.com/","https://www.ddinstagram.com/")
+                await message.channel.send(f"{message.author.name}發送了[instagram‖url]({end})")
+                await asyncio.sleep(1)
+                await message.delete()
+            except Exception as e:
+                channel = self.bot.get_channel(1064943718014124142)
+                await channel.send(f"{message.guild.name} {message.channel.name} 發生錯誤:{e}")
+
         if message.author.name == 'tan_07_24':
             if ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                 replies = [
@@ -103,8 +114,7 @@ class Event(commands.Cog):
                 await asyncio.sleep(2)
                 await message.reply(random.choice(['喔！親愛的，我覺得你太好了，我配不上你！','你很好！但抱歉，我現在還不想結婚、進入婚姻！','比起當夫妻，我覺得我們當朋友會更適合！','很抱歉讓你誤會，但我真的把你當好朋友！','我真的也很喜歡你，但我覺得真的在一起會是個錯誤！','我已經看見在一起後未來會發生的問題，所以當朋友比較長久！','我相信你一定會找到更適合的人，我真的不適合你！']))
 
-        if "看開了" in message.content:
-            await message.reply("https://cdn.discordapp.com/attachments/1226176299647893575/1241067493448089783/IMG_0488.jpg?ex=6648d9ac&is=6647882c&hm=1e02c6ab7f6b2d0429095c8e44d198e1a61a65d618afaaf9d75055aa789c49b8&")
+        
 
         try:
             conn = sqlite3.connect("userbool.db")
@@ -116,7 +126,7 @@ class Event(commands.Cog):
             conn.close()
         except sqlite3.Error as e:
             channel = self.bot.get_channel(1064943718014124142)
-            await channel.send(f"錯誤:{e}")
+            await channel.send(f"{message.guild.name} {message.channel.name} 發生錯誤:{e}")
         for row in rows:
             if message.author.id == row[1]:
                 can = sqlite3.connect("event.db")
@@ -141,7 +151,7 @@ class Event(commands.Cog):
                     conn.close()
                 except sqlite3.Error as e:
                     channel = self.bot.get_channel(1064943718014124142)
-                    await channel.send(f"錯誤:{e}")
+                    await channel.send(f"{message.guild.name} {message.channel.name} 發生錯誤:{e}")
                 for row in rows:
                     if message.author.id == row[1]:
                         cao = sqlite3.connect("myserver.db")
@@ -154,7 +164,7 @@ class Event(commands.Cog):
                                 await message.channel.send(f"{raw[2]}")
             except sqlite3.Error as e:
                 channel = self.bot.get_channel(1064943718014124142)
-                await channel.send(f"錯誤:{e}")
+                await channel.send(f"{message.guild.name} {message.channel.name} 發生錯誤:{e}")
 
             if message.content == '毯毯養我':
                 await message.channel.send('<:worryCoffee:416636282324910100>')

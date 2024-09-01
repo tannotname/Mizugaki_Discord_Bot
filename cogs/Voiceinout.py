@@ -18,7 +18,7 @@ class Voiceinout(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self,member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if before.channel is None and after.channel is not None:
-            
+
             nickname = member.nick if member.nick else member.name
             channel = after.channel
             random7_int = random.randint(0, 255)
@@ -82,7 +82,7 @@ class Voiceinout(commands.Cog):
                 ]
                 # 選擇回覆
             reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-            embed = discord.Embed(title="成員離開", description=reply, color= emb_color)
+            embed = discord.Embed(title="成員out", description=reply, color= emb_color)
             await channel.send(embed=embed)
         elif before.channel != after.channel:
             if after.channel is not None:
@@ -99,7 +99,7 @@ class Voiceinout(commands.Cog):
                 random8_int = random.randint(0, 255)
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="成員移動", description=f"{nickname} 被打飛了", color= emb_color)
+                embed = discord.Embed(title="成員out", description=f"{nickname} out", color= emb_color)
                 await channel.send(embed=embed)
 
 
