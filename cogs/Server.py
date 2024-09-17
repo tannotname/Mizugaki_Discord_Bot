@@ -1,29 +1,17 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-class Sever(commands.Cog):
+serverinoutchannelint = os.getenv("SERVERINOUT")
+serverinoutchannel = 1273144645580357675
+
+class Server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    @app_commands.command(name="server_list",description = "列出機器人所在伺服器")
-    async def server_list(self, interaction: discord.Interaction,):
-        try:
-            if interaction.user.name == "tan_07_24":
-                guilds = self.bot.guilds
-                lite = "機器人加入伺服器連結：\n\n"
-                for guild in guilds: 
-                    invites = await guild.invites()
-                    if invites:
-                        invite_url = invites[0].url
-                        lite += f"Invite for [{guild.name} {guild.id}]({invite_url})\n"
-                    else:
-                        lite += f"No invite found for {guild.name} {guild.id}\n"
-                await interaction.response.send_message(lite,ephemeral=True)
-        except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
-
     
     @app_commands.command(name="serverlist",description = "列出機器人所在伺服器")
     async def serverlist(self, interaction: discord.Interaction,):
@@ -65,21 +53,21 @@ class Sever(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild: discord.Guild):
-        channel = self.bot.get_channel(1243941520793407559)
+        channel = self.bot.get_channel(serverinoutchannel)
         try:
             guildurl = await guild.invites()
         except Exception as e:
             guildurl = f"No invite found:{e}"
-        await channel.send(f"```\n機器人進入伺服器:{guild.name} {guild.id}\n```")
+        await channel.send(f"```\n機器人進入伺服器:{guild.name} {guild.id} {guild.member_count}\n```")
 
     @commands.Cog.listener()
     async def on_guild_remove(self,guild: discord.Guild):
-        channel = self.bot.get_channel(1243941520793407559)
+        channel = self.bot.get_channel(serverinoutchannel)
         try:
             guildurl = await guild.invites()
         except Exception as e:
             guildurl = f"No invite found:{e}"
-        await channel.send(f"```\n機器人離開伺服器:{guild.name} {guild.id}\n``` ")
+        await channel.send(f"```\n機器人離開伺服器:{guild.name} {guild.id} {guild.member_count}\n``` ")
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Sever(bot))
+    await bot.add_cog(Server(bot))

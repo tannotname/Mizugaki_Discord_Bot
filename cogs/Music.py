@@ -15,15 +15,6 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    
-    @app_commands.command(name="join_in_voicechanne",description="讓機器人進入語音播放音樂")
-    async def record(self, interaction: discord.Interaction, channel: discord.VoiceChannel, musicename: str, musicurl: str):
-        try:
-            await channel.connect()
-            await self.download_music(interaction, musicename, musicurl)
-        except Exception as e:
-            await self.handle_error(interaction, e, "錯誤")
-
     async def download_music(self, interaction: discord.Interaction, musicename: str, musicurl: str):
         try:
             yt = YouTube(musicurl)
@@ -53,7 +44,14 @@ class Music(commands.Cog):
         embed = discord.Embed(title=title, color=emb_color)
         embed.add_field(name=str(exception), value="若有問題請告知 <@710128890240041091> ", inline=False)
         await interaction.response.send_message(embed=embed)
-    
+
+    @app_commands.command(name="join_in_voicechanne",description="讓機器人進入語音播放音樂")
+    async def record(self, interaction: discord.Interaction, channel: discord.VoiceChannel, musicename: str, musicurl: str):
+        try:
+            await channel.connect()
+            await self.download_music(interaction, musicename, musicurl)
+        except Exception as e:
+            await self.handle_error(interaction, e, "錯誤")
     
     @app_commands.command(name="stop_record",description="讓機器人離開語音")
     async def stoprecord(self,interaction:discord.Interaction):
