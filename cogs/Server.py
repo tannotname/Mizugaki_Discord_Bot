@@ -7,7 +7,11 @@ import os
 load_dotenv()
 
 serverinoutchannelint = os.getenv("SERVERINOUT")
-serverinoutchannel = 1273144645580357675
+serverinoutchannel = int(serverinoutchannelint)
+
+
+def check_if_user_is_me(interaction: discord.Interaction) -> bool:
+    return interaction.user.id == 710128890240041091
 
 class Server(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -41,13 +45,31 @@ class Server(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
-    @app_commands.command(name="指定server邀請",description="指定一個頻道並獲取該頻道的邀請連結")
-    async def channelurl(self,interaction:discord.Interaction,guildid:str):
+    @app_commands.command(name="kensuku_bot_channel",description="搜尋頻道")
+    @app_commands.check(check_if_user_is_me)
+    async def kesoku_bot_channel(self,interaction:discord.Interaction,channel_id:str):
         try:
-            if interaction.user.name == "tan_07_24":
-                guild = self.bot.get_guild(int(guildid))
-                guildurl = await guild.invites()
-                await interaction.response.send_message(f"{guild.name} | {guildurl}",ephemeral=True)
+            if interaction.user.name == "tan_07_24" and interaction.user.id == 710128890240041091:
+                channel = self.bot.get_channel(int(channel_id))
+                if channel is not None:
+                    await interaction.response.send_message(f"{channel.guild.name} {channel.guild.id} {channel.name} id:{channel.id} 擁有者:{channel.guild.owner.id}",ephemeral=True)
+                else:
+                    await interaction.response.send_message("找不到此頻道",ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
+    @app_commands.command(name="contact_robotmaker",description="聯絡機器人製作者")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def Contact_administrator(self,interaction:discord.Interaction,message:str):
+        try:
+            channel = 1273145222813057045
+            guild = interaction.guild
+            username = interaction.user.name
+            userid = interaction.user.id
+            channel2 =interaction.channel.id
+            channel = self.bot.get_channel(channel)
+            await channel.send(f"# 使用者回報\n{username};{userid}\n{guild.name};{guild.id};{channel2}\n{message}")
+            await interaction.response.send_message("已回報",ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
@@ -68,6 +90,8 @@ class Server(commands.Cog):
         except Exception as e:
             guildurl = f"No invite found:{e}"
         await channel.send(f"```\n機器人離開伺服器:{guild.name} {guild.id} {guild.member_count}\n``` ")
+
+        
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Server(bot))

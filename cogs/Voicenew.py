@@ -4,6 +4,8 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext import commands
 import sqlite3
+from pytube import YouTube
+import os
 
 #drop table 
 con = sqlite3.connect('voicenew.db') # 連線資料庫
@@ -14,14 +16,14 @@ row = cur.fetchone()[0]
     # 查詢資料庫是否存在
 
 if row == 0:
-    cur.execute("CREATE TABLE voicenew(sever TEXT,categoryname TEXT, categoryid NUMERIC,channelname TEXT,channelid NUMERIC)")
+    cur.execute("CREATE TABLE voicenew(server_id NUMERIC,server_name TEXT,categoryname TEXT, categoryid NUMERIC,channelname TEXT,channelid NUMERIC)")
     cur.execute("CREATE TABLE newchannel(channelname TEXT,channelid NUMERIC)")
     con.commit()
     print("表格 'voicenew' 已建立.")
 else:
     print("表格“voicenew”已存在.")
     con.commit()
-    
+
 
 
 
@@ -32,21 +34,20 @@ class Voicenew(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("已載入voicenew")
-    
 
     @app_commands.command(name="設定動態語音頻道", description="設定動態語音頻道入口")
     @app_commands.checks.has_permissions(administrator=True)
     async def newvoicechannel(self, interaction: discord.Interaction, category: discord.CategoryChannel, voice: discord.VoiceChannel): 
         await interaction.response.send_message(f"已設定動態語音入口為 {voice.name}")
-        sever = interaction.guild
-        print(sever,category,voice)
+        server = interaction.guild
+        print(server,category,voice)
         con = sqlite3.connect('voicenew.db')
         print("已連線資料庫")
         cur = con.cursor()
         print("已建立游標")
-        cur.execute("INSERT INTO voicenew (sever,categoryname,categoryid,channelname,channelid) VALUES (?,?,?,?,?)",(sever.name, category.name,category.id, voice.name,voice.id))
+        cur.execute("INSERT INTO voicenew (server_id,server_name,categoryname,categoryid,channelname,channelid) VALUES (?,?,?,?,?,?)",(server.id,server.name, category.name,category.id, voice.name,voice.id))
         con.commit()
-        print(f"{sever},{category},{voice} 存入")
+        print(f"{server},{category},{voice} 存入")
         con.close()
         cur.close()
 
@@ -81,7 +82,7 @@ class Voicenew(commands.Cog):
                     random9_int = random.randint(0, 255)
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                     embed = discord.Embed(title="錯誤", color= emb_color)
-                    embed.add_field(name=e,value="若有問題請告知 @tan_07_24 ",inline=False)
+                    embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
                     await interaction.response.send_message(embed=embed) 
                 await interaction.response.send_message("已創建動態語音頻道,開始將您傳送過去")
         except Exception as e:
@@ -113,13 +114,27 @@ class Voicenew(commands.Cog):
             embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
             await interaction.response.send_message(embed=embed) 
 
+    @app_commands.command(name="解除動態語音入口",description="將動態語音入口刪除")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def deletevoicenew(self,interaction:discord.Interaction):
+        try:
+            conn = sqlite3.connect("voicenew.db")
+            comn = conn.cursor()
+            comn.execute("DELETE FROM voicenew WHERE server_id=?", (interaction.guild.id,))
+            conn.commit()
+            comn.close()
+            conn.close()
+            await interaction.response.send_message("已解除動態語音入口")
+        except sqlite3.Error as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if (after.channel is not None and before.channel is None) or (before.channel != after.channel and after.channel is not None):
             try:
                 conn = sqlite3.connect("voicenew.db")
                 comn = conn.cursor()
-                comn.execute("SELECT * FROM voicenew WHERE sever=?",(member.guild.name,))
+                comn.execute("SELECT * FROM voicenew WHERE server_id=?",(member.guild.id,))
                 rows = comn.fetchall()
                 conn.commit()
                 comn.close()
@@ -128,7 +143,7 @@ class Voicenew(commands.Cog):
                 await after.channel.send(f"錯誤:{e}")
             try:
                 for row in rows:
-                    if after.channel.id == row[4]:
+                    if after.channel.id == row[5]:
                         print(f"{member.display_name} 加入 {after.channel.name}")
                         guild = member.guild
                         category = after.channel.category
