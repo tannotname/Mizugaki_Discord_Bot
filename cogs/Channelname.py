@@ -13,8 +13,18 @@ class Channelname(commands.Cog):
     @app_commands.command(name = "更改文字頻道名稱", description = "更改文字頻道名稱")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def changetextchannelname(self,interaction: discord.Interaction, channel: discord.TextChannel, new_name: str):
+        try:    
+            channelname = channel.name
             await channel.edit(name=new_name)
-            await interaction.response.send_message(f"{interaction.user.nick or interaction.user.name}已將此頻道名稱更改為 {new_name}")
+            await interaction.response.send_message(f"{interaction.user.nick or interaction.user.name}已將文字頻道{channelname}名稱更改為 {new_name}")
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name = "更改語音頻道名稱", description = "更改語音頻道名稱")
     @app_commands.checks.has_permissions(manage_channels=True)
@@ -78,8 +88,17 @@ class Channelname(commands.Cog):
     @app_commands.command(name="更改文字頻道說名", description="更改文字頻道說名")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def topicTextChannel(self,interaction:discord.Interaction,channel:discord.TextChannel,topic:str):
+        try:    
             await channel.edit(topic=topic)
-            await interaction.response.send_message(f"已將頻道說明設為: {topic}")
+            await interaction.response.send_message(f"已將文字頻道 {channel.name }說明設為: {topic}")
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            await interaction.response.send_message(embed=embed)
           
     @app_commands.command(name="move_to_none",description="移出語音頻道中的成員")
     @app_commands.checks.has_permissions(manage_channels=True)

@@ -6,14 +6,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-
-errorchannel = os.getenv("ERRORCHANNEL")
-if errorchannel is None:
-    print("錯誤：找不到 報錯頻道。請設置 報錯頻道。")
-    exit()
-
-error_channel = int(errorchannel)
+error_channel = 1273144773435326545
 
 class TaskBase(commands.Cog):
     def __init__(self, bot: commands.Bot):

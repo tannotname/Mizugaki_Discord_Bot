@@ -17,7 +17,7 @@ row = cur.fetchone()[0]
 
 if row == 0:
     cur.execute("CREATE TABLE voicenew(server_id NUMERIC,server_name TEXT,categoryname TEXT, categoryid NUMERIC,channelname TEXT,channelid NUMERIC)")
-    cur.execute("CREATE TABLE newchannel(channelname TEXT,channelid NUMERIC)")
+    cur.execute("CREATE TABLE newchannel(channelname TEXT,channelid NUMERIC,channelmember NUMERIC)")
     con.commit()
     print("表格 'voicenew' 已建立.")
 else:
@@ -33,7 +33,7 @@ class Voicenew(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("已載入voicenew")
+        print("已載入動態語音模組")
 
     @app_commands.command(name="設定動態語音頻道", description="設定動態語音頻道入口")
     @app_commands.checks.has_permissions(administrator=True)
@@ -73,7 +73,7 @@ class Voicenew(commands.Cog):
                     print(f"資料庫連接時發生錯誤: {e}")
                 try:
                     cur = conn.cursor()
-                    cur.execute("INSERT INTO newchannel (channelname, channelid) VALUES (?, ?)", (newchannel.name, newchannel.id))
+                    cur.execute("INSERT INTO newchannel (channelname, channelid,channelmember) VALUES (?,?,?)", (newchannel.name, newchannel.id,interaction.user.id))
                     conn.commit()
                     conn.close()
                 except sqlite3.Error as e:
@@ -134,7 +134,7 @@ class Voicenew(commands.Cog):
             try:
                 conn = sqlite3.connect("voicenew.db")
                 comn = conn.cursor()
-                comn.execute("SELECT * FROM voicenew WHERE server_id=?",(member.guild.id,))
+                comn.execute("SELECT * FROM voicenew WHERE server_id=?",(after.channel.guild.id,)) # 搜尋伺服器設定的頻道
                 rows = comn.fetchall()
                 conn.commit()
                 comn.close()
@@ -143,24 +143,36 @@ class Voicenew(commands.Cog):
                 await after.channel.send(f"錯誤:{e}")
             try:
                 for row in rows:
-                    if after.channel.id == row[5]:
-                        print(f"{member.display_name} 加入 {after.channel.name}")
+                    if after.channel.id == row[5]:  # 檢查進入的channel是否為設定頻道
+                        conn = sqlite3.connect("voicenew.db")
+                        comn = conn.cursor()
+                        comn.execute("SELECT * FROM newchannel WHERE channelmember=?",(member.id,)) # 搜尋伺服器設定的頻道
+                        row = comn.fetchall()
+                        conn.commit()
+                        comn.close()
+                        conn.close()
+                        print(row)
+                        for row in row:
+                            if row != None:
+                                channel = self.bot.get_channel(row[1])
+                                await member.move_to(channel)
+                                return
                         guild = member.guild
                         category = after.channel.category
-                        newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan")
+                        newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan") # 創建動態語音頻道
                         print(f"已創建 {newchannel.name} 在 {category.name}")
-                        await member.move_to(newchannel)
+                        await member.move_to(newchannel) # 移動成員至語音頻道
                         print(f"已移動 {member.display_name} 到 {newchannel.name}")
                         try:
-                            await newchannel.set_permissions(member, manage_channels=True)
+                            await newchannel.set_permissions(member, manage_channels=True) # 給予成員channel管理權
                             print(f"已給予{member.name} {newchannel.name} 的管理權限")              
                         except:
                             print("給予權限時發生未知錯誤")
                         try:
-                            conn = sqlite3.connect('voicenew.db')
+                            conn = sqlite3.connect('voicenew.db') # 將創建的語音頻道寫入資料庫
                             print("資料庫連接成功")
                             cur = conn.cursor()
-                            cur.execute("INSERT INTO newchannel (channelname, channelid) VALUES (?, ?)", (newchannel.name, newchannel.id))
+                            cur.execute("INSERT INTO newchannel (channelname, channelid,channelmember) VALUES (?,?,?)", (newchannel.name, newchannel.id,member.id))
                             conn.commit()
                             conn.close()
                         except sqlite3.Error as e:
@@ -174,18 +186,17 @@ class Voicenew(commands.Cog):
                 conn = sqlite3.connect("voicenew.db")
                 cursor = conn.cursor()
                 # 查詢
-                cursor.execute("SELECT * FROM newchannel")
+                cursor.execute("SELECT * FROM newchannel") # 檢查所有頻道是否有被刪除
                 rows = cursor.fetchall()
                 for row in rows:
                     channel_id = int(row[1])
                     channel = self.bot.get_channel(channel_id)
                     if channel is None:
                         cursor.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,))
-                    elif len(channel.members) == 0:
-                        await channel.delete()
+                    elif len(channel.members) == 0: # 檢查channel.members是否為空
+                        await channel.delete() # 刪除channel
                         print(f"頻道 {channel.name} 已被刪除")
-                        cursor.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,))
-                # 提交事务并关闭数据库连接
+                        cursor.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,)) # 刪除資料庫中資料
                 conn.commit()
                 cursor.close()
                 conn.close()

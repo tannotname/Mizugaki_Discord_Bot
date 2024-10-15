@@ -13,7 +13,7 @@ class Voiceinout(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("已載入voice")
+        print("已載入語音頻道通知模組")
 
     @commands.Cog.listener()
     async def on_voice_state_update(self,member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):

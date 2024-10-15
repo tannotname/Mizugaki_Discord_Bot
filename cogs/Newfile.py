@@ -7,13 +7,13 @@ class Newfile(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="upcogspy",description = "上傳指令檔案至cogs")
-    async def upcogspy(self, interaction: discord.Interaction, cogsname: str,cogsfile:discord.Attachment):
+    async def upcogspy(self, interaction: discord.Interaction,cogsfile:discord.Attachment):
         if interaction.user.id == 710128890240041091:
             await interaction.response.send_message("認證權限通過")
             attachment = cogsfile
             # 保存文件到指定位置
             await attachment.save('C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\{}'.format(attachment.filename))
-            await interaction.response.send_message(F'文件{cogsname}已保存至指定位置！')
+            await interaction.followup.send(F'文件{cogsfile.filename}已保存至指定位置！')
         elif interaction.user.id != 710128890240041091:
             await interaction.response.send_message("你沒有權限進行此命令")
 

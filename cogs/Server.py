@@ -6,9 +6,7 @@ import os
 
 load_dotenv()
 
-serverinoutchannelint = os.getenv("SERVERINOUT")
-serverinoutchannel = int(serverinoutchannelint)
-
+serverinoutchannel = 1273144645580357675
 
 def check_if_user_is_me(interaction: discord.Interaction) -> bool:
     return interaction.user.id == 710128890240041091
