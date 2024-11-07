@@ -82,7 +82,7 @@ class Voicenew(commands.Cog):
                     random9_int = random.randint(0, 255)
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                     embed = discord.Embed(title="錯誤", color= emb_color)
-                    embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+                    embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                     await interaction.response.send_message(embed=embed) 
                 await interaction.response.send_message("已創建動態語音頻道,開始將您傳送過去")
         except Exception as e:
@@ -91,7 +91,7 @@ class Voicenew(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="登入語音動態房",description="將語音房間設為動態刪除")
@@ -111,7 +111,7 @@ class Voicenew(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="解除動態語音入口",description="將動態語音入口刪除")

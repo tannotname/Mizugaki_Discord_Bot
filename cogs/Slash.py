@@ -208,7 +208,7 @@ class Slash(commands.Cog):
             else:
                 channel = interaction.channel
                 await channel.send(f"{話}")
-                channel = self.bot.get_channel(1064943718014124142)
+                channel = self.bot.get_channel(1273144773435326545)
                 await channel.send(f"{interaction.user.name} 使用:{話}")
                 await interaction.response.send_message("已執行指令",ephemeral=True)
         except Exception as e:
@@ -226,7 +226,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="ὀστρακισμός",description="放逐指定成員")
@@ -241,7 +241,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="複製伺服器頻道",description="複製所選的伺服器所有頻道")
@@ -259,7 +259,7 @@ class Slash(commands.Cog):
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                 await interaction.response.send_message(embed=embed) 
             try:
                 for channel in guild.text_channels:
@@ -270,7 +270,7 @@ class Slash(commands.Cog):
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                 await interaction.response.send_message(embed=embed) 
             try:
                 for channel in guild.voice_channels:
@@ -281,7 +281,7 @@ class Slash(commands.Cog):
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                 await interaction.response.send_message(embed=embed) 
             await interaction.response.send_message("執行",ephemeral=True)
         except Exception as e:
@@ -290,7 +290,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="新增文字_and_語音頻道",description="新增頻道組合")
@@ -315,7 +315,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="新的表情符號",description="新增表情符號")
@@ -343,7 +343,7 @@ class Slash(commands.Cog):
                 random9_int = random.randint(0, 255)
                 emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                 await interaction.response.send_message(embed=embed)
                 
     @app_commands.command(name="new_sticker",description="為伺服器新增貼圖")
@@ -367,7 +367,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="隱藏語音頻道",description="隱藏語音頻道並只讓當前在於頻道內的人可見該頻道")
@@ -389,7 +389,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="voting",description="幫機器人投票")
@@ -408,7 +408,7 @@ class Slash(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
 async def setup(bot: commands.Bot):

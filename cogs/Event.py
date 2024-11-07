@@ -237,7 +237,7 @@ class Event(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="myservermessage",description="增加本伺服器專屬訊息反應")
@@ -263,7 +263,7 @@ class Event(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="usermessage",description="註冊訊息反應服務(早安晚安不在此限)")
@@ -284,7 +284,7 @@ class Event(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="instagramurl反應",description="啟用instagram連接反應(預設true)")

@@ -59,7 +59,7 @@ class Surveillanc(commands.Cog):
                     for attachment in message.attachments:
                         await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
         except Exception as e:
-            channel = self.bot.get_channel(1064943718014124142)
+            channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"錯誤:{e}")
 
     @commands.Cog.listener()
@@ -75,7 +75,7 @@ class Surveillanc(commands.Cog):
                 channel = self.bot.get_channel(channelid)
                 await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n```{before.content}\n更改後訊息內容:\n```{after.content}")
         except Exception as e:
-            channel = self.bot.get_channel(1064943718014124142)
+            channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"錯誤:{e}")
             
     @commands.Cog.listener()
@@ -94,7 +94,7 @@ class Surveillanc(commands.Cog):
                     for attachment in message.attachments:
                         await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
         except Exception as e:
-            channel = self.bot.get_channel(1064943718014124142)
+            channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"錯誤:{e}")
 
 
@@ -112,7 +112,7 @@ class Surveillanc(commands.Cog):
             cur.execute("INSERT INTO surveillanc (surveillancguildname,surveillancguildid,surveillancchannelname,surveillancreplychannelid) VALUES (?,?,?,?)",(guild_name,guild_id,channel_name,channel_id))
             con.commit()
             await interaction.response.send_message(f"{guild_name},{channel_name} 存入")
-            channel = self.bot.get_channel(1064943718014124142)
+            channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{Username}新增:{guild_name},{guild_id},{channel_name},{channel_id} 存入")
             con.close()
             cur.close()
