@@ -62,6 +62,42 @@ class Surveillanc(commands.Cog):
             channel = self.bot.get_channel(1064943718014124142)
             await channel.send(f"錯誤:{e}")
 
+    @commands.Cog.listener()
+    async def on_message_edit(self,before: discord.Message, after: discord.Message):
+        try:
+            can = sqlite3.connect("surveillanc.db")
+            car = can.cursor()
+            car.execute("SELECT * FROM surveillanc WHERE surveillancguildid=?",(before.guild.id ,))
+            rows = car.fetchall()
+            can.commit()
+            for row in rows:
+                channelid = row[3]
+                channel = self.bot.get_channel(channelid)
+                await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n```{before.content}\n更改後訊息內容:\n```{after.content}")
+        except Exception as e:
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"錯誤:{e}")
+            
+    @commands.Cog.listener()
+    async def on_message_delete(self,message: discord.Message):
+        try:
+            can = sqlite3.connect("surveillanc.db")
+            car = can.cursor()
+            car.execute("SELECT * FROM surveillanc WHERE surveillancguildid=?",(message.guild.id ,))
+            rows = car.fetchall()
+            can.commit()
+            for row in rows:
+                channelid = row[3]
+                channel = self.bot.get_channel(channelid)
+                await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n```{message.content}")
+                if message.attachments:
+                    for attachment in message.attachments:
+                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
+        except Exception as e:
+            channel = self.bot.get_channel(1064943718014124142)
+            await channel.send(f"錯誤:{e}")
+
+
     @app_commands.command(name="set_transmission_channel",description="設定監測訊息傳送頻道")
     @app_commands.checks.has_permissions(administrator=True)
     async def set_transmission_channel(self,interaction:discord.Interaction,channel:discord.TextChannel):
@@ -86,7 +122,7 @@ class Surveillanc(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
     @app_commands.command(name="look_transmission_channel",description="查看監測訊息傳送頻道")
@@ -106,8 +142,26 @@ class Surveillanc(commands.Cog):
             random9_int = random.randint(0, 255)
             emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="若有問題請告知 <@710128890240041091> ",inline=False)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
+
+    @app_commands.command(name="delete_transmission_channel",description="刪除監測訊息傳送頻道")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def delete_transmission_channel(self,interaction:discord.Interaction):
+        try:
+            can = sqlite3.connect("surveillanc.db")
+            car = can.cursor()
+            car.execute("DELETE FROM surveillanc WHERE surveillancguildid=?",(interaction.guild.id ,))
+            can.commit()
+            await interaction.response.send_message(f"{interaction.guild.name}已刪除")
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+            await interaction.response.send_message(embed=embed)
 
 
 

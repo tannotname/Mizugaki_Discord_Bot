@@ -1,3 +1,5 @@
+import random
+import sqlite3
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -11,6 +13,23 @@ serverinoutchannel = 1273144645580357675
 def check_if_user_is_me(interaction: discord.Interaction) -> bool:
     return interaction.user.id == 710128890240041091
 
+
+#drop table 
+con = sqlite3.connect('announcementchannel.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("announcementchannel",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+if row == 0:
+    cur.execute("CREATE TABLE announcementchannel(guildid NUMERIC,guildname TEXT,channelid NUMERIC,channelname TEXT)")
+    con.commit()
+    print("表格 'announcementchannel' 已建立.")
+else:
+    print("表格“announcementchannel”已存在.")
+    con.commit()
+
+
 class Server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -22,18 +41,18 @@ class Server(commands.Cog):
                 guilds = self.bot.guilds
                 lite = "機器人加入伺服器：\n\n"
                 for guild in guilds: 
-                    lite += f"```{guild.name} {guild.id} {guild.owner_id}```\n"
+                    lite += f"```{guild.name} {guild.id} {guild.owner_id} 人數:{guild.member_count}\n```\n"
                 await interaction.response.send_message(lite,ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(f"錯誤:{e}")
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
-    @app_commands.command(name="server_channel",description="列出伺服器頻道")
+    @app_commands.command(name="server_channel",description="列出伺服器文字頻道")
     async def server_channel(self,interaction:discord.Interaction,guildid:str):
         try:
             if interaction.user.name == "tan_07_24":
                 guild = self.bot.get_guild(int(guildid))
                 if guild is not None:
-                    channels = guild.channels
+                    channels = guild.text_channels
                     channel1 = f"以下為{guild.name}所有頻道\n\n"
                     for channel in channels:
                         channel1 += f"{channel.name} id:{channel.id}\n"
@@ -70,6 +89,103 @@ class Server(commands.Cog):
             await interaction.response.send_message("已回報",ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
+    @app_commands.command(name="creator_announcement",description="製作者公告")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def creator_announcement(self,interaction:discord.Interaction,message:str,guildid:str,channelid:str):
+        try:
+            if interaction.user.id == 710128890240041091:
+                guildid = int(guildid)
+                channelid = int(channelid)
+                guild = self.bot.get_guild(guildid)
+                channel = self.bot.get_channel(channelid)
+                random7_int = random.randint(0, 255)
+                random8_int = random.randint(0, 255)
+                random9_int = random.randint(0, 255)
+                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                embed = discord.Embed(title="機器人製作者公告", color= emb_color)
+                embed.add_field(name=f"{message}",value="",inline=False)
+                await channel.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.response.send_message("沒有權限",ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
+    @app_commands.command(name="server_announcement",description="機器人全域公告")
+    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.check(check_if_user_is_me)
+    async def server_announcement(self,interaction:discord.Interaction,message:str):
+        try:
+            if interaction.user.id == 710128890240041091:
+                guilds = self.bot.guilds
+                random7_int = random.randint(0, 255)
+                random8_int = random.randint(0, 255)
+                random9_int = random.randint(0, 255)
+                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                embed = discord.Embed(title="機器人製作者公告", color= emb_color)
+                embed.add_field(name=f"{message}",value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+                for guild in guilds:
+                    guild_id = guild.id
+                    conn = sqlite3.connect("announcementchannel.db")
+                    comn = conn.cursor()
+                    comn.execute("SELECT * FROM announcementchannel WHERE guildid=?",(guild_id,)) # 搜尋伺服器設定的頻道
+                    rows = comn.fetchall()
+                    conn.commit()
+                    comn.close()
+                    conn.close()
+                    error = ""
+                    try:
+                        if rows == []:
+                            guild = self.bot.get_guild(int(guild_id))
+                            channels = guild.text_channels
+                            if len(channels) > 1:
+                                channel = channels[2]
+                            else:
+                                channel = channels[0]
+                            print(f"{guild.name} {channel.name}")
+                            await channel.send(embed=embed)
+                            error += f"{guild.name} {message}"
+                        if rows != []:
+                            for row in rows:
+                                channel = self.bot.get_channel(row[2])
+                                print(f"{guild.name} {channel.name}")
+                                await channel.send(embed=embed)
+                                error += f"{guild.name} {message}"
+                    except Exception as e:
+                        error += f"{guild.name} {e}\n" 
+                await interaction.response.send_message(error,ephemeral=True)
+            else:
+                await interaction.response.send_message("沒有權限",ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"{guild.name}錯誤:{e}",ephemeral=True)
+
+
+    @app_commands.command(name="set_announcement_channel",description="設定機器人公告頻道")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_announcement_channel(self,interaction:discord.Interaction,channel:discord.TextChannel):
+        try:
+            channel_name = channel.name
+            channel_id = channel.id
+            guild_name = interaction.guild.name
+            guild_id = interaction.guild.id
+            con = sqlite3.connect("announcementchannel.db")
+            cur = con.cursor()
+            cur.execute("INSERT INTO announcementchannel (guildid,guildname,channelid,channelname) VALUES (?,?,?,?)",(guild_id,guild_name,channel_id,channel_name))
+            con.commit()
+            await interaction.response.send_message(f"已設置機器人公告頻道為:{guild_name},{channel_name}")
+            con.close()
+            cur.close()
+            channel = self.bot.get_channel(1273145222813057045)
+            await channel.send(f"伺服器:{guild_name}設置 {channel_name} 為公告頻道")
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+            await interaction.response.send_message(embed=embed)
 
     @commands.Cog.listener()
     async def on_guild_join(self,guild: discord.Guild):
