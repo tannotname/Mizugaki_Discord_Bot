@@ -60,7 +60,7 @@ class Surveillanc(commands.Cog):
                         await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"錯誤:{e}")
+            await channel.send(f"{message.guild.name} 全訊息監測錯誤:{e}")
 
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
@@ -76,7 +76,7 @@ class Surveillanc(commands.Cog):
                 await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n```{before.content}\n更改後訊息內容:\n```{after.content}")
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"錯誤:{e}")
+            await channel.send(f"{before.guild.name} 修改監測錯誤:{e}")
             
     @commands.Cog.listener()
     async def on_message_delete(self,message: discord.Message):
@@ -95,7 +95,7 @@ class Surveillanc(commands.Cog):
                         await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"錯誤:{e}")
+            await channel.send(f"{message.guild.name} 刪除監測錯誤:{e}")
 
 
     @app_commands.command(name="set_transmission_channel",description="設定監測訊息傳送頻道")
