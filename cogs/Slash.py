@@ -356,8 +356,13 @@ class Slash(commands.Cog):
                     try:
                         await newtickerfile.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{newtickerfile.filename}')
                     except Exception as e:
-                        print(f"發生儲存錯誤:{e}")
-                        return
+                        random7_int = random.randint(0, 255)
+                        random8_int = random.randint(0, 255)
+                        random9_int = random.randint(0, 255)
+                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                        embed = discord.Embed(title="錯誤", color= emb_color)
+                        embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+                        await interaction.response.send_message(embed=embed)
                     file = discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{newtickerfile.filename}')
                     sticker = await interaction.guild.create_sticker(name=stickername,file=file,emoji=emoji,description=description,reason=reason)
                     await interaction.response.send_message(f"以新增貼圖 {sticker.name}")

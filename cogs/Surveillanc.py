@@ -44,26 +44,11 @@ class Surveillanc(commands.Cog):
                         print(f"發生儲存錯誤:{e}")
                         return
                     await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
-
-        try:
-            can = sqlite3.connect("surveillanc.db")
-            car = can.cursor()
-            car.execute("SELECT * FROM surveillanc WHERE surveillancguildid=?",(message.guild.id ,))
-            rows = car.fetchall()
-            can.commit()
-            for row in rows:
-                channelid = row[3]
-                channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測訊息\n```\n發送人:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發送頻道:{message.channel}\n訊息內容:\n```{message.content}")
-                if message.attachments:
-                    for attachment in message.attachments:
-                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
-        except Exception as e:
-            channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"{message.guild.name} 全訊息監測錯誤:{e}")
-
+                                                     
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
+        if before.author == self.bot.user:
+            return
         try:
             can = sqlite3.connect("surveillanc.db")
             car = can.cursor()
@@ -73,13 +58,15 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 channelid = row[3]
                 channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n```{before.content}\n更改後訊息內容:\n```{after.content}")
+                await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n{before.content}\n更改後訊息內容:\n{after.content}\n```")
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{before.guild.name} 修改監測錯誤:{e}")
             
     @commands.Cog.listener()
     async def on_message_delete(self,message: discord.Message):
+        if message.author == self.bot.user:
+            return
         try:
             can = sqlite3.connect("surveillanc.db")
             car = can.cursor()
@@ -89,7 +76,7 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 channelid = row[3]
                 channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n```{message.content}")
+                await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n{message.content}\n```")
                 if message.attachments:
                     for attachment in message.attachments:
                         await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
