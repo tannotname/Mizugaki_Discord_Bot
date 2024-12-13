@@ -1,5 +1,6 @@
 import random
 import sqlite3
+from typing import Optional
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -90,9 +91,10 @@ class Server(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
-    @app_commands.command(name="creator_announcement",description="製作者公告")
+    @app_commands.command(name="creator_announcement",description="製作者公告") #於指定的channel發送公告
     @app_commands.checks.has_permissions(administrator=True)
-    async def creator_announcement(self,interaction:discord.Interaction,message:str,guildid:str,channelid:str):
+    @app_commands.describe(title = "公告標題",description = "公告描述",message = "公告內容")
+    async def creator_announcement(self,interaction:discord.Interaction,title:str,description:str,message_name:str,message:str,message2_name:Optional[str],message2:Optional[str],guildid:str,channelid:str):
         try:
             if interaction.user.id == 710128890240041091:
                 guildid = int(guildid)
@@ -102,9 +104,14 @@ class Server(commands.Cog):
                 random7_int = random.randint(0, 255)
                 random8_int = random.randint(0, 255)
                 random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="機器人製作者公告", color= emb_color)
-                embed.add_field(name=f"{message}",value="",inline=False)
+                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int) # 決定embed顏色
+                embed = discord.Embed(title=title, description= description, color= emb_color)
+                embed.set_author(name= f"{interaction.user.name}",  icon_url= interaction.user.avatar.url)#作者
+                embed.add_field(name=message_name,value=f"{message}",inline=False) #第一行(一定要有)
+                if message2 is not None:
+                    embed.add_field(name=message2_name,value=message2,inline=False) #第二行(可空白)
+                embed.set_footer(text= "機器人支援伺服器:https://discord.gg/Eq52KNPca9") #頁尾
+
                 await channel.send(embed=embed)
                 await interaction.response.send_message(embed=embed)
             else:
@@ -114,17 +121,25 @@ class Server(commands.Cog):
 
     @app_commands.command(name="server_announcement",description="機器人全域公告")
     @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.describe(title = "公告標題",description = "公告描述",message = "公告內容")
     @app_commands.check(check_if_user_is_me)
-    async def server_announcement(self,interaction:discord.Interaction,message:str):
+    async def server_announcement(self,interaction:discord.Interaction,title:str,description:Optional[str],message_name:str,message:str,message2_name:Optional[str],message2:Optional[str]):
         try:
             if interaction.user.id == 710128890240041091:
                 guilds = self.bot.guilds
                 random7_int = random.randint(0, 255)
                 random8_int = random.randint(0, 255)
                 random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="機器人製作者公告", color= emb_color)
-                embed.add_field(name=f"{message}",value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int) # 決定embed顏色
+                if description is not None:
+                    embed = discord.Embed(title=title, description= description, color= emb_color)
+                if description is None:
+                    embed = discord.Embed(title=title, color= emb_color)
+                embed.set_author(name= f"{interaction.user.name}",  icon_url= interaction.user.avatar.url)#作者
+                embed.add_field(name=message_name,value=f"{message}",inline=False) #第一行(一定要有)
+                if message2 is not None:
+                    embed.add_field(name=message2_name,value=message2,inline=False) #第二行(可空白)
+                embed.set_footer(text= "機器人支援伺服器:https://discord.gg/Eq52KNPca9") #頁尾
                 for guild in guilds:
                     guild_id = guild.id
                     conn = sqlite3.connect("announcementchannel.db")
