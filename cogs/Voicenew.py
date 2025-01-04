@@ -24,6 +24,21 @@ else:
     print("表格“voicenew”已存在.")
     con.commit()
 
+con = sqlite3.connect('channel_to_user.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("channel_to_user",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+
+if row == 0:
+    cur.execute("CREATE TABLE channel_to_user(server_id NUMERIC,server_name TEXT,channelname TEXT,userid NUMERIC,username TEXT)")
+    con.commit()
+    print("表格 'channel_to_user' 已建立.")
+else:
+    print("表格“channel_to_user”已存在.")
+    con.commit()
+
 
 
 
@@ -114,6 +129,39 @@ class Voicenew(commands.Cog):
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
+    @app_commands.command(name="customized_voicename_to_user", description="讓使用者自定義自己的語音頻道名稱,只在使用指令的伺服器生效")
+    @app_commands.describe(channel_name = "請使用*user*代替使用者名稱,例如:*user*的房間")
+    async def customized_voicename_to_user(self, interaction: discord.Interaction,channel_name:str):
+        try:
+            user_id = interaction.user.id
+            user_name = interaction.user.display_name
+            guild_id = interaction.guild.id
+            guild_name = interaction.guild.name
+            if "*user*" in channel_name: # 檢查頻道名稱是否包含 *user*
+                channel_name = channel_name.replace("*user*",user_name,2) # 替換 *user* 為使用者名稱
+            con = sqlite3.connect("channel_to_user.db")
+            cur = con.cursor()
+            cur.execute("SELECT * FROM channel_to_user WHERE server_id=? AND userid=?",(guild_id,user_id,))
+            rows = cur.fetchall()
+            if rows ==[]:
+                cur.execute("INSERT INTO channel_to_user (server_id,server_name,channelname,userid,username) VALUES (?,?,?,?,?)",(guild_id,guild_name,channel_name,user_id,user_name))
+            if rows != []:
+                cur.execute("UPDATE channel_to_user SET channelname=? WHERE server_id=? AND userid=?",(channel_name,guild_id,user_id))
+            con.commit()
+            await interaction.response.send_message(f"已設置您的語音頻道為:{channel_name}",ephemeral=True)
+            con.close()
+            cur.close()
+            channel = self.bot.get_channel(1273145437259305001)
+            await channel.send(f"{user_name} 已設置您的語音頻道為:{channel_name}")
+        except Exception as e:
+            random7_int = random.randint(0, 255)
+            random8_int = random.randint(0, 255)
+            random9_int = random.randint(0, 255)
+            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+            await interaction.response.send_message(embed=embed,ephemeral=True)
+
     @app_commands.command(name="解除動態語音入口",description="將動態語音入口刪除")
     @app_commands.checks.has_permissions(administrator=True)
     async def deletevoicenew(self,interaction:discord.Interaction):
@@ -159,8 +207,21 @@ class Voicenew(commands.Cog):
                                 return
                         guild = member.guild
                         category = after.channel.category
-                        newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan") # 創建動態語音頻道
-                        print(f"已創建 {newchannel.name} 在 {category.name}")
+                        can = sqlite3.connect("channel_to_user.db") # 搜尋user是否有自訂語音頻道名稱
+                        car = can.cursor()
+                        car.execute("SELECT * FROM channel_to_user WHERE server_id=? AND userid=?",(guild.id,member.id ,))
+                        rows = car.fetchall()
+                        can.commit()
+                        car.close()
+                        can.close()
+                        if rows == []:
+                            newchannel = await guild.create_voice_channel(name=f"{member.display_name} 的房間", category=category,rtc_region="japan") # 創建動態語音頻道
+                            print(f"已創建 {newchannel.name} 在 {category.name}")
+                        if rows != []:
+                            for row in rows:
+                                channel_name = row[2]
+                                newchannel = await guild.create_voice_channel(name=f"{channel_name}", category=category,rtc_region="japan")
+                                print(f"已創建 {channel_name} 在 {category.name}")
                         await member.move_to(newchannel) # 移動成員至語音頻道
                         print(f"已移動 {member.display_name} 到 {newchannel.name}")
                         try:
