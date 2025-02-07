@@ -44,7 +44,7 @@ class TaskBase(commands.Cog):
             await channel.send(f"# 機器人狀態報錯\n>錯誤:{erro}")
 
             
-    @app_commands.command(name = "set_online", description = "重設機器人狀態")
+    @app_commands.command(name = "server_set_online", description = "重設機器人狀態")
     @app_commands.checks.has_permissions(administrator=True)
     async def set_online(self, interaction: discord.Interaction):
         try:

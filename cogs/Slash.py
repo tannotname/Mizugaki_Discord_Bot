@@ -10,6 +10,7 @@ import os
 import string
 import random
 from dotenv import load_dotenv
+import xml.etree.ElementTree as ET
 
 load_dotenv()
 
@@ -146,10 +147,11 @@ class Slash(commands.Cog):
             help_message = ""
             for command in commands:
                 if isinstance(command, app_commands.Command):
-                    if command.description:
-                        help_message += f"/{command.name} - {command.description}\n"
-                    else:
-                        help_message += f"/{command.name}\n"
+                    if "server" not in command.name:
+                        if command.description:
+                            help_message += f"/{command.name} - {command.description}\n"
+                        else:
+                            help_message += f"/{command.name}\n"
             await interaction.response.send_message(f"```{help_message}```")
         except Exception as e:
             await interaction.response.send_message(f'發送訊息時發生錯誤：{e}',ephemeral=True)
@@ -186,10 +188,10 @@ class Slash(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"報錯:{e}",ephemeral=True)
 
-    @app_commands.command(name="giverole",description="給予或移除伺服器成員新的身分組")
-    async def user12365478(self,interaction:discord.Interaction,role:discord.Role,member:discord.Member,out_give:bool):
+    @app_commands.command(name="server_give_role",description="給予或移除伺服器成員新的身分組")
+    async def give_role(self,interaction:discord.Interaction,role:discord.Role,member:discord.Member,out_give:bool):
         try:
-            if interaction.user.name == "tan_07_24":
+            if interaction.user.name == "tan_00_00":
                 if out_give == True:
                     await member.add_roles(role)
                     await interaction.response.send_message(f"已給予{member.nick} {role.name} 身分組",ephemeral=True)
@@ -302,9 +304,9 @@ class Slash(commands.Cog):
         await guild.create_voice_channel(name=channelname,category=newcategory,rtc_region="japan")
         await interaction.response.send_message("執行",ephemeral=True)
 
-    @app_commands.command(name="新增文字頻道",description="新增文字頻道")
+    @app_commands.command(name="add_text_channel",description="新增文字頻道")
     @app_commands.checks.has_permissions(administrator=True)
-    async def newchannel(self,interaction:discord.Interaction,channelname:str,category:discord.CategoryChannel):
+    async def add_text_channel(self,interaction:discord.Interaction,channelname:str,category:discord.CategoryChannel):
         try:
             guild = interaction.guild
             await guild.create_text_channel(name=channelname,category=category)
@@ -318,7 +320,7 @@ class Slash(commands.Cog):
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
-    @app_commands.command(name="新的表情符號",description="新增表情符號")
+    @app_commands.command(name="新增表情符號",description="新增表情符號")
     @app_commands.checks.has_permissions(administrator=True)
     async def newemoji(self,interaction:discord.Interaction,newemoji:discord.Attachment,emojiname:str):
         if interaction.guild.id == 1238133524662325351:
@@ -366,47 +368,6 @@ class Slash(commands.Cog):
                     file = discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\pho\\{newtickerfile.filename}')
                     sticker = await interaction.guild.create_sticker(name=stickername,file=file,emoji=emoji,description=description,reason=reason)
                     await interaction.response.send_message(f"以新增貼圖 {sticker.name}")
-        except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-            await interaction.response.send_message(embed=embed)
-
-    @app_commands.command(name="隱藏語音頻道",description="隱藏語音頻道並只讓當前在於頻道內的人可見該頻道")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    async def hide_voice_channel(self,interaction:discord.Interaction,channel:discord.VoiceChannel):
-        try:
-            guildmembers = interaction.guild.members
-            for guildmember in guildmembers:
-                await channel.set_permissions(guildmember, read_messages=False)
-            channelmembers = channel.members
-            membername = "已給予:"
-            for member in channelmembers:
-                await channel.set_permissions(member, read_messages=True)
-                membername += f"{member.name},"
-            await interaction.response.send_message(f"{membername}觀看權限",ephemeral=True)
-        except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-            await interaction.response.send_message(embed=embed) 
-
-    @app_commands.command(name="voting",description="幫機器人投票")
-    async def botVoting(self,interaction:discord.Interaction):
-        try:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="幫機器人投票", color= emb_color)
-            embed.add_field(name="https://top.gg/bot/998929254265929788/vote",value="",inline=False)
-            await interaction.response.send_message(embed=embed) 
         except Exception as e:
             random7_int = random.randint(0, 255)
             random8_int = random.randint(0, 255)

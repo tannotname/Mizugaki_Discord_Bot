@@ -235,6 +235,26 @@ class Voiceinout(commands.Cog):
                             ]
                             # 選擇回覆
                         reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
+                    if rows == [] and before.channel.guild.id == 1238133524662325351 and member.id == 869508194383298612:
+                        replies2 = (f" {nickname} 他不愛我們所以離開了")
+                        replies3 = (f"{nickname} 跳出了 {before.channel.name}")
+                        replies4 = (f"{nickname} 成功離開了 {before.channel.name}")
+                        replies5 = (f"{nickname} 不小心掉出了 {before.channel.name}")
+                        replies6 = (f"{nickname} 跑走了")
+                        replies7 = (f"{nickname} 他離開了")
+                        replies8 = (f"好想{nickname}")
+                        
+                        replies = [
+                                    (replies2, 0.05),
+                                    (replies3, 0.05),
+                                    (replies4, 0.1),
+                                    (replies5, 0.1),
+                                    (replies6, 0.1),
+                                    (replies7, 0.1),
+                                    (replies8, 0.5),
+                            ]
+                            # 選擇回覆
+                        reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
                     if rows != []:
                         for row in rows:
                             out_reply = row[3]

@@ -6,7 +6,7 @@ class Newfile(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="upcogspy",description = "上傳指令檔案至cogs")
+    @app_commands.command(name="server_upcogspy",description = "上傳指令檔案至cogs")
     async def upcogspy(self, interaction: discord.Interaction,cogsfile:discord.Attachment):
         if interaction.user.id == 710128890240041091:
             await interaction.response.send_message("認證權限通過")

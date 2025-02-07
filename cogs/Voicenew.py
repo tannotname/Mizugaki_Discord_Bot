@@ -137,6 +137,7 @@ class Voicenew(commands.Cog):
             user_name = interaction.user.display_name
             guild_id = interaction.guild.id
             guild_name = interaction.guild.name
+            channel_name2 = channel_name
             if "*user*" in channel_name: # 檢查頻道名稱是否包含 *user*
                 channel_name = channel_name.replace("*user*",user_name,2) # 替換 *user* 為使用者名稱
             con = sqlite3.connect("channel_to_user.db")
@@ -144,9 +145,9 @@ class Voicenew(commands.Cog):
             cur.execute("SELECT * FROM channel_to_user WHERE server_id=? AND userid=?",(guild_id,user_id,))
             rows = cur.fetchall()
             if rows ==[]:
-                cur.execute("INSERT INTO channel_to_user (server_id,server_name,channelname,userid,username) VALUES (?,?,?,?,?)",(guild_id,guild_name,channel_name,user_id,user_name))
+                cur.execute("INSERT INTO channel_to_user (server_id,server_name,channelname,userid,username) VALUES (?,?,?,?,?)",(guild_id,guild_name,channel_name2,user_id,user_name))
             if rows != []:
-                cur.execute("UPDATE channel_to_user SET channelname=? WHERE server_id=? AND userid=?",(channel_name,guild_id,user_id))
+                cur.execute("UPDATE channel_to_user SET channelname=? WHERE server_id=? AND userid=?",(channel_name2,guild_id,user_id))
             con.commit()
             await interaction.response.send_message(f"已設置您的語音頻道為:{channel_name}",ephemeral=True)
             con.close()
@@ -220,6 +221,9 @@ class Voicenew(commands.Cog):
                         if rows != []:
                             for row in rows:
                                 channel_name = row[2]
+                                channel_name = str(channel_name)
+                                if "*user*" in channel_name:
+                                    channel_name = channel_name.replace("*user*",f"{member.display_name}")
                                 newchannel = await guild.create_voice_channel(name=f"{channel_name}", category=category,rtc_region="japan")
                                 print(f"已創建 {channel_name} 在 {category.name}")
                         await member.move_to(newchannel) # 移動成員至語音頻道

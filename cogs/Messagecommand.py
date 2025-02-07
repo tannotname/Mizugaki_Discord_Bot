@@ -9,23 +9,11 @@ import os
 class Messagecommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.user_menu = app_commands.ContextMenu(
-            name='User Info',
-            callback=self.user_info
-        )
-        self.bot.tree.add_command(self.user_menu)
-
         self.message_menu = app_commands.ContextMenu(
             name="翻轉圖片",
             callback=self.rotate
         )
         self.bot.tree.add_command(self.message_menu)
-
-
-
-    async def user_info(self, interaction: discord.Interaction, user: discord.User):
-        """Handle the user context menu action."""
-        await interaction.response.send_message(f'User: {user.name}\nID: {user.id}')
 
     async def rotate(self, interaction:discord.Interaction,message:discord.Message):
         try:

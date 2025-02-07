@@ -10,9 +10,9 @@ class Channelname(commands.Cog):
 
 
 
-    @app_commands.command(name = "更改文字頻道名稱", description = "更改文字頻道名稱")
+    @app_commands.command(name = "text_channel_name_set", description = "更改文字頻道名稱")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def changetextchannelname(self,interaction: discord.Interaction, channel: discord.TextChannel, new_name: str):
+    async def text_channel_name_set(self,interaction: discord.Interaction, channel: discord.TextChannel, new_name: str):
         try:    
             channelname = channel.name
             await channel.edit(name=new_name)
@@ -26,21 +26,21 @@ class Channelname(commands.Cog):
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name = "更改語音頻道名稱", description = "更改語音頻道名稱")
+    @app_commands.command(name = "voice_channel_name_set", description = "更改語音頻道名稱")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def change_voicechannel_name(self,interaction: discord.Interaction, channel: discord.VoiceChannel, new_name: str):
+    async def voice_channel_name_set(self,interaction: discord.Interaction, channel: discord.VoiceChannel, new_name: str):
             await channel.edit(name=new_name)
             await interaction.response.send_message(f"{interaction.user.nick or interaction.user.name}已將此頻道名稱更改為 {new_name}")
 
-    @app_commands.command(name = "刪除文字頻道", description = "刪除文字頻道")
+    @app_commands.command(name = "text_channel_delete", description = "刪除文字頻道")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def deletetextchannel(self,interaction: discord.Interaction, channel: discord.TextChannel):
+    async def text_channel_delete(self,interaction: discord.Interaction, channel: discord.TextChannel):
             await interaction.response.send_message(f"已刪除{channel.name}頻道")
             await channel.delete()
 
-    @app_commands.command(name = "刪除類別", description = "刪除類別")
+    @app_commands.command(name = "category_channel_delete", description = "刪除類別以及類別內的所有頻道")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def delecategorychannel(self,interaction: discord.Interaction, category: discord.CategoryChannel):
+    async def category_channel_delete(self,interaction: discord.Interaction, category: discord.CategoryChannel):
             channels = category.channels
             for channel in channels:
                 print(f"已刪除{channel.name}頻道")
@@ -49,15 +49,15 @@ class Channelname(commands.Cog):
             await category.delete()
             
 
-    @app_commands.command(name = "刪除語音頻道", description = "刪除語音頻道")
+    @app_commands.command(name = "voice_channel_delete", description = "刪除語音頻道")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def deletevoicechannel(self,interaction: discord.Interaction, channel: discord.VoiceChannel):
+    async def voice_channel_delete(self,interaction: discord.Interaction, channel: discord.VoiceChannel):
             await interaction.response.send_message(f"已刪除{channel.name}頻道")
             await channel.delete()
 
-    @app_commands.command(name="更改語音頻道位元率", description="更改語音頻道位元率")
+    @app_commands.command(name="voice_channel_bitrate_set", description="更改語音頻道位元率")
     @app_commands.checks.has_permissions(manage_channels=True)
-    async def setstatus(self,interaction:discord.Interaction,channel:discord.VoiceChannel,bitrate1:int):
+    async def voice_channel_bitrate_set(self,interaction:discord.Interaction,channel:discord.VoiceChannel,bitrate1:int):
         try:
             await channel.edit(bitrate=bitrate1)
             await interaction.response.send_message(f"已將位元率改成{bitrate1}")
@@ -85,7 +85,7 @@ class Channelname(commands.Cog):
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
 
-    @app_commands.command(name="更改文字頻道說名", description="更改文字頻道說名")
+    @app_commands.command(name="更改文字頻道說明", description="更改文字頻道說明")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def topicTextChannel(self,interaction:discord.Interaction,channel:discord.TextChannel,topic:str):
         try:    

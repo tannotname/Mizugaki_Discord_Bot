@@ -35,10 +35,25 @@ class Server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
+
+    @app_commands.command(name="server_user_info",description = "列出使用者資訊")
+    async def user_info(self, interaction: discord.Interaction, userid:str):
+        try:
+            user_id = int(userid)
+            if interaction.user.name == "tan_00_00":
+                user = await self.bot.fetch_user(user_id)
+                if user is None:
+                    await interaction.response.send_message("找不到此使用者",ephemeral=True)
+                await interaction.response.send_message(f'User: {user.name}\nID: {user.id}' ,ephemeral=True)
+            else:
+                await interaction.response.send_message("沒有權限",ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
     @app_commands.command(name="serverlist",description = "列出機器人所在伺服器")
     async def serverlist(self, interaction: discord.Interaction,):
         try:
-            if interaction.user.name == "tan_07_24":
+            if interaction.user.name == "tan_00_00":
                 guilds = self.bot.guilds
                 lite = "機器人加入伺服器：\n\n"
                 for guild in guilds: 
@@ -50,7 +65,7 @@ class Server(commands.Cog):
     @app_commands.command(name="server_channel",description="列出伺服器文字頻道")
     async def server_channel(self,interaction:discord.Interaction,guildid:str):
         try:
-            if interaction.user.name == "tan_07_24":
+            if interaction.user.name == "tan_00_00":
                 guild = self.bot.get_guild(int(guildid))
                 if guild is not None:
                     channels = guild.text_channels
@@ -63,11 +78,11 @@ class Server(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
-    @app_commands.command(name="kensuku_bot_channel",description="搜尋頻道")
+    @app_commands.command(name="server_kensuku_bot_channel",description="搜尋頻道")
     @app_commands.check(check_if_user_is_me)
     async def kesoku_bot_channel(self,interaction:discord.Interaction,channel_id:str):
         try:
-            if interaction.user.name == "tan_07_24" and interaction.user.id == 710128890240041091:
+            if interaction.user.name == "tan_00_00" and interaction.user.id == 710128890240041091:
                 channel = self.bot.get_channel(int(channel_id))
                 if channel is not None:
                     await interaction.response.send_message(f"{channel.guild.name} {channel.guild.id} {channel.name} id:{channel.id} 擁有者:{channel.guild.owner.id}",ephemeral=True)
@@ -91,7 +106,7 @@ class Server(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
-    @app_commands.command(name="creator_announcement",description="製作者公告") #於指定的channel發送公告
+    @app_commands.command(name="server_creator_announcement",description="製作者公告") #於指定的channel發送公告
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(title = "公告標題",description = "公告描述",message = "公告內容")
     async def creator_announcement(self,interaction:discord.Interaction,title:str,description:str,message_name:str,message:str,message2_name:Optional[str],message2:Optional[str],guildid:str,channelid:str):
