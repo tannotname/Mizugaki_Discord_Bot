@@ -39,11 +39,11 @@ class Surveillanc(commands.Cog):
                 for attachment in message.attachments:
                     # 發送圖片連結
                     try:
-                        await attachment.save(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}')
+                        await attachment.save(f'pho\\{attachment.filename}')
                     except Exception as e:
                         print(f"發生儲存錯誤:{e}")
                         return
-                    await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
+                    await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
                                                      
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
@@ -63,7 +63,7 @@ class Surveillanc(commands.Cog):
                 await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n{before.content}\n更改後訊息內容:\n{after.content}\n```")
                 if before.attachments:
                     for attachment in before.attachments:
-                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
+                        await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{before.guild.name} {before.author.name} 修改監測錯誤:{e}")
@@ -86,7 +86,7 @@ class Surveillanc(commands.Cog):
                 await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n{message.content}\n```")
                 if message.attachments:
                     for attachment in message.attachments:
-                        await channel.send(file=discord.File(f'C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\pho\\{attachment.filename}'))
+                        await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{message.guild.name} {message.author.name} 刪除監測錯誤:{e}")

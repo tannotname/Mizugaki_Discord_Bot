@@ -12,7 +12,7 @@ class Newfile(commands.Cog):
             await interaction.response.send_message("認證權限通過")
             attachment = cogsfile
             # 保存文件到指定位置
-            await attachment.save('C:\\Users\\曉黑\\Desktop\\DISCORDBOTmain\\cogs\\{}'.format(attachment.filename))
+            await attachment.save('cogs\\{}'.format(attachment.filename))
             await interaction.followup.send(F'文件{cogsfile.filename}已保存至指定位置！')
         elif interaction.user.id != 710128890240041091:
             await interaction.response.send_message("你沒有權限進行此命令")
