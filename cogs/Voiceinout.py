@@ -1,11 +1,9 @@
-import datetime
 import random
 import sqlite3
 import discord
 from discord.ext import commands
 from discord import app_commands
-from discord.ext import commands, tasks
-from discord.app_commands import Choice
+from discord.ext import commands
 
 channel_creators = {}
 
@@ -247,11 +245,11 @@ class Voiceinout(commands.Cog):
                         replies = [
                                     (replies2, 0.05),
                                     (replies3, 0.05),
-                                    (replies4, 0.1),
-                                    (replies5, 0.1),
-                                    (replies6, 0.1),
-                                    (replies7, 0.1),
-                                    (replies8, 0.5),
+                                    (replies4, 0.05),
+                                    (replies5, 0.05),
+                                    (replies6, 0.05),
+                                    (replies7, 0.05),
+                                    (replies8, 0.7),
                             ]
                             # 選擇回覆
                         reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
@@ -379,8 +377,21 @@ class Voiceinout(commands.Cog):
                         await channel.send(embed=embed)
 
         except Exception as e:
+            if before.channel is None and after.channel is not None: # 進入語音頻道
+                await after.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+
+            elif after.channel is None and before.channel is not None: # 離開語音頻道
+                await before.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+
+            elif before.channel != after.channel: # 跳轉語音頻道
+                if after.channel is not None:
+                    if e == "403 Forbidden (error code: 50001): Missing Access":
+                        return
+                    else:
+                        await after.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+
             channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"{before.channel.guild.name or after.channel.guild.name} {member.name} 語音進入通知錯誤:{e}")
+            await channel.send(f"{before.channel.guild.name or after.channel.guild.name} {member.name} 語音進出通知錯誤:{e}")
 
 
 async def setup(bot: commands.Bot):

@@ -5,13 +5,13 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
 serverinoutchannel = 1273144645580357675
 
 def check_if_user_is_me(interaction: discord.Interaction) -> bool:
+    
     return interaction.user.id == 710128890240041091
 
 
@@ -35,8 +35,10 @@ class Server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
+    MY_GUILD_ID = discord.Object(1249359655323566101)  # Guild ID here
 
     @app_commands.command(name="server_user_info",description = "列出使用者資訊")
+    
     async def user_info(self, interaction: discord.Interaction, userid:str):
         try:
             user_id = int(userid)
@@ -51,6 +53,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="serverlist",description = "列出機器人所在伺服器")
+    
     async def serverlist(self, interaction: discord.Interaction,):
         try:
             if interaction.user.name == "tan_00_00":
@@ -63,6 +66,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="server_channel",description="列出伺服器文字頻道")
+    
     async def server_channel(self,interaction:discord.Interaction,guildid:str):
         try:
             if interaction.user.name == "tan_00_00":
@@ -79,6 +83,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="server_kensuku_bot_channel",description="搜尋頻道")
+    
     @app_commands.check(check_if_user_is_me)
     async def kesoku_bot_channel(self,interaction:discord.Interaction,channel_id:str):
         try:
@@ -92,6 +97,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="contact_robotmaker",description="聯絡機器人製作者")
+    
     @app_commands.checks.has_permissions(administrator=True)
     async def Contact_administrator(self,interaction:discord.Interaction,message:str):
         try:
@@ -107,6 +113,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="server_creator_announcement",description="製作者公告") #於指定的channel發送公告
+    
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(title = "公告標題",description = "公告描述",message = "公告內容")
     async def creator_announcement(self,interaction:discord.Interaction,title:str,description:str,message_name:str,message:str,message2_name:Optional[str],message2:Optional[str],guildid:str,channelid:str):
@@ -135,6 +142,7 @@ class Server(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="server_announcement",description="機器人全域公告")
+    
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.describe(title = "公告標題",description = "公告描述",message = "公告內容")
     @app_commands.check(check_if_user_is_me)
