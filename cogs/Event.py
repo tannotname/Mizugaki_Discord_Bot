@@ -2,9 +2,7 @@ import time
 import discord
 import sqlite3
 import random
-import asyncio
 from discord.ext import commands
-import re
 from discord import app_commands
 from dotenv import load_dotenv
 import os
@@ -99,29 +97,7 @@ class Event(commands.Cog):
         if message.author == self.bot.user:
             return
     
-        if message.author.id != 1273144645580357675:
-            if message.author.name == 'tan_00_00':
-                if ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
-                    replies = [
-                            ('睡你麻痺 起來嗨', 0.1),
-                            ('晚安', 0.6),
-                            ('浣安', 0.3)
-                    ]
-                    # 選擇回覆
-                    reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-                    await message.reply(reply,mention_author=False)
-            elif  ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
-                    replies = [
-                            ('睡你麻痺 起來嗨', 0.2),
-                            ('晚安', 0.7),
-                            ('浣安', 0.1)
-                    ]
-                    # 選擇回覆
-                    reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-                    await message.reply(reply,mention_author=False)
-
-        if message.author.name == 'tan_00_00':
-            return
+        
               
 
         try:
@@ -145,6 +121,27 @@ class Event(commands.Cog):
                 for row in rows:
                     if row[1] in message.content:
                         await message.channel.send(f"{row[2]}")
+
+
+                    if message.author.name == 'tan_00_00':
+                        if ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
+                            replies = [
+                                    ('睡你麻痺 起來嗨', 0.1),
+                                    ('晚安', 0.6),
+                                    ('浣安', 0.3)
+                            ]
+                            # 選擇回覆
+                            reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
+                            await message.reply(reply,mention_author=False)
+                    elif  ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
+                            replies = [
+                                    ('睡你麻痺 起來嗨', 0.2),
+                                    ('晚安', 0.7),
+                                    ('浣安', 0.1)
+                            ]
+                            # 選擇回覆
+                            reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
+                            await message.reply(reply,mention_author=False)
 
         # 以下為支援伺服器專用
         if  message.guild.id == 1238133524662325351:
@@ -180,7 +177,7 @@ class Event(commands.Cog):
             if '好啊沒關係啊' in message.content :
                 await message.reply('# 對!你不重要 <a:123456:1231591204228173914>')
 
-    @app_commands.command(name="usermessage",description="註冊訊息反應服務(早安晚安不在此限)")
+    @app_commands.command(name="usermessage",description="註冊訊息反應服務")
     async def usermessage(self,interaction:discord.Interaction,yes_or_no:str):
         try:
             con = sqlite3.connect("userbool.db")
