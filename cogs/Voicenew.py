@@ -125,6 +125,38 @@ class Voicenew(commands.Cog):
                     embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                     await interaction.response.send_message(embed=embed) 
                 await interaction.response.send_message("已創建動態語音頻道,開始將您傳送過去")
+                try:
+                    conn = sqlite3.connect('voice_monitor_channel.db') # 將創建的語音頻道寫入資料庫
+                    comn = conn.cursor()
+                    comn.execute("SELECT * FROM voice_monitor_channel WHERE server_id=?",(interaction.guild.id,)) # 搜尋伺服器設定的監測頻道
+                    rows = comn.fetchall()
+                    conn.commit()
+                    comn.close()
+                    conn.close()
+                except sqlite3.Error as e:
+                    channel = self.bot.get_channel(1273144773435326545)
+                    await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
+                try:
+                    for row in rows:
+                        if row is None:
+                            return
+                        elif row != None:
+                            channel = self.bot.get_channel(row[3])
+                            print(row[3])
+                            new_channel = await channel.create_thread(name=f"{newchannel.name}", type=discord.ChannelType.private_thread)
+                            try:
+                                conn = sqlite3.connect("voice_surveillanc.db")
+                                comn = conn.cursor()
+                                comn.execute("INSERT INTO voice_surveillanc (surveillanc_guild_name,surveillanc_guild_id,surveillanc_channel_id,surveillanc_reply_channel_id) VALUES (?,?,?,?)", (new_channel.guild.name,new_channel.guild.id,newchannel.id,new_channel.id))
+                                conn.commit()
+                                comn.close()
+                                conn.close()
+                            except sqlite3.Error as e:
+                                channel = self.bot.get_channel(1273144773435326545)
+                                await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
+                except Exception as e:
+                    channel = self.bot.get_channel(1273144773435326545)
+                    await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
         except Exception as e:
             random7_int = random.randint(0, 255)
             random8_int = random.randint(0, 255)
