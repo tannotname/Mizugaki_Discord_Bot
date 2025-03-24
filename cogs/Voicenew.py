@@ -4,9 +4,6 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext import commands
 import sqlite3
-from pytube import YouTube
-import os
-
 #drop table 
 con = sqlite3.connect('voicenew.db') # 連線資料庫
 cur = con.cursor() # 建立游標
@@ -39,7 +36,35 @@ else:
     print("表格“channel_to_user”已存在.")
     con.commit()
 
+con = sqlite3.connect('newchannel_id.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("newchannel_id",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
 
+if row == 0:
+    cur.execute("CREATE TABLE newchannel_id(server_id NUMERIC,server_name TEXT,channelname TEXT,userid NUMERIC,username TEXT)")
+    con.commit()
+    print("表格 'newchannel_id' 已建立.")
+else:
+    print("表格“newchannel_id”已存在.")
+    con.commit()
+
+con = sqlite3.connect('voice_monitor_channel.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("voice_monitor_channel",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+
+if row == 0:
+    cur.execute("CREATE TABLE voice_monitor_channel(server_name TEXT,server_id NUMERIC,channel_name TEXT,channel_id NUMERIC)")
+    con.commit()
+    print("表格 'voice_monitor_channel' 已建立.")
+else:
+    print("表格'voice_monitor_channel'已存在.")
+    con.commit()
 
 
 class Voicenew(commands.Cog):
@@ -177,6 +202,21 @@ class Voicenew(commands.Cog):
         except sqlite3.Error as e:
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
+    @app_commands.command(name="設定語音監測頻道",description="設定語音監測訊息傳送的頻道")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_voice_monitor_channel(self,interaction:discord.Interaction,channel:discord.TextChannel):
+        try:
+            server = interaction.guild
+            conn = sqlite3.connect("voice_monitor_channel.db")
+            comn = conn.cursor()
+            comn.execute("INSERT INTO voice_monitor_channel (server_name,server_id,channel_name,channel_id) VALUES (?,?,?,?)", (server.name,server.id,channel.name,channel.id))
+            conn.commit()
+            comn.close()
+            conn.close()
+            await interaction.response.send_message("已設定語音監測頻道")
+        except sqlite3.Error as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if (after.channel is not None and before.channel is None) or (before.channel != after.channel and after.channel is not None):
@@ -189,7 +229,7 @@ class Voicenew(commands.Cog):
                 comn.close()
                 conn.close()
             except sqlite3.Error as e:
-                await after.channel.send(f"錯誤:{e}")
+                await after.channel.send(f"錯誤1:{e}")
             try:
                 for row in rows:
                     if after.channel.id == row[5]:  # 檢查進入的channel是否為設定頻道
@@ -232,7 +272,8 @@ class Voicenew(commands.Cog):
                             await newchannel.set_permissions(member, manage_channels=True) # 給予成員channel管理權
                             print(f"已給予{member.name} {newchannel.name} 的管理權限")              
                         except:
-                            print("給予權限時發生未知錯誤")
+                            channel = self.bot.get_channel(1273144773435326545)
+                            await channel.send(f"{guild.name} {member.name} 創建動態動態語音頻道給予權限時發生錯誤")
                         try:
                             conn = sqlite3.connect('voicenew.db') # 將創建的語音頻道寫入資料庫
                             print("資料庫連接成功")
@@ -241,9 +282,43 @@ class Voicenew(commands.Cog):
                             conn.commit()
                             conn.close()
                         except sqlite3.Error as e:
-                            print(f"資料庫連接時發生錯誤: {e}")
+                            channel = self.bot.get_channel(1273144773435326545)
+                            await channel.send(f"{guild.name} {member.name} 資料連接錯誤:{e}")
+                        try:
+                            conn = sqlite3.connect('voice_monitor_channel.db') # 將創建的語音頻道寫入資料庫
+                            comn = conn.cursor()
+                            comn.execute("SELECT * FROM voice_monitor_channel WHERE server_id=?",(after.channel.guild.id,)) # 搜尋伺服器設定的監測頻道
+                            rows = comn.fetchall()
+                            conn.commit()
+                            comn.close()
+                            conn.close()
+                        except sqlite3.Error as e:
+                            channel = self.bot.get_channel(1273144773435326545)
+                            await channel.send(f"{guild.name} {member.name} 資料連接錯誤:{e}")
+                        try:
+                            for row in rows:
+                                if row is None:
+                                    return
+                                elif row != None:
+                                    channel = self.bot.get_channel(row[3])
+                                    print(row[3])
+                                    new_channel = await channel.create_thread(name=f"{newchannel.name}", type=discord.ChannelType.private_thread)
+                                    try:
+                                        conn = sqlite3.connect("voice_surveillanc.db")
+                                        comn = conn.cursor()
+                                        comn.execute("INSERT INTO voice_surveillanc (surveillanc_guild_name,surveillanc_guild_id,surveillanc_channel_id,surveillanc_reply_channel_id) VALUES (?,?,?,?)", (new_channel.guild.name,new_channel.guild.id,newchannel.id,new_channel.id))
+                                        conn.commit()
+                                        comn.close()
+                                        conn.close()
+                                    except sqlite3.Error as e:
+                                        channel = self.bot.get_channel(1273144773435326545)
+                                        await channel.send(f"{guild.name} {member.name} 資料連接錯誤:{e}")
+                        except Exception as e:
+                            channel = self.bot.get_channel(1273144773435326545)
+                            await channel.send(f"{guild.name} {member.name} 資料連接錯誤:{e}")
             except Exception as e:
-                await after.channel.send(f"錯誤:{e}")
+                channel = self.bot.get_channel(1273144773435326545)
+                await channel.send(f"{guild.name} {member.name} 動態語音錯誤:{e}")
 
         if (before.channel is not None and after.channel is None) or (before.channel != after.channel and before.channel is not None):
             try:

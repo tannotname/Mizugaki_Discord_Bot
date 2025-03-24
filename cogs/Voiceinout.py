@@ -5,8 +5,9 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext import commands
 
-channel_creators = {}
 
+channel_creators = {}
+error_channel = 1273144773435326545
 
 #drop table 
 con = sqlite3.connect('voicechannelinout.db') # 連線資料庫
@@ -233,26 +234,6 @@ class Voiceinout(commands.Cog):
                             ]
                             # 選擇回覆
                         reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-                    if rows == [] and before.channel.guild.id == 1238133524662325351 and member.id == 869508194383298612:
-                        replies2 = (f" {nickname} 他不愛我們所以離開了")
-                        replies3 = (f"{nickname} 跳出了 {before.channel.name}")
-                        replies4 = (f"{nickname} 成功離開了 {before.channel.name}")
-                        replies5 = (f"{nickname} 不小心掉出了 {before.channel.name}")
-                        replies6 = (f"{nickname} 跑走了")
-                        replies7 = (f"{nickname} 他離開了")
-                        replies8 = (f"好想{nickname}")
-                        
-                        replies = [
-                                    (replies2, 0.05),
-                                    (replies3, 0.05),
-                                    (replies4, 0.05),
-                                    (replies5, 0.05),
-                                    (replies6, 0.05),
-                                    (replies7, 0.05),
-                                    (replies8, 0.7),
-                            ]
-                            # 選擇回覆
-                        reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
                     if rows != []:
                         for row in rows:
                             out_reply = row[3]
@@ -390,7 +371,7 @@ class Voiceinout(commands.Cog):
                     else:
                         await after.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
 
-            channel = self.bot.get_channel(1273144773435326545)
+            channel = self.bot.get_channel(error_channel)
             await channel.send(f"{before.channel.guild.name or after.channel.guild.name} {member.name} 語音進出通知錯誤:{e}")
 
 
