@@ -4,7 +4,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-
 def voice_surveillanc():
     #drop table 
     con = sqlite3.connect('voice_surveillanc.db') # 連線資料庫
@@ -25,17 +24,56 @@ class Voice_surveillanc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-
+    @app_commands.command(name="voice_surveillanc_set",description="將選擇的語音頻到納入監測範圍")
+    @app_commands.checks.has_permissions(administrator=True)    
+    async def voice_surveillanc_set(self,interaction:discord.Interaction,set_channel:discord.VoiceChannel):
+        try:
+            guild = interaction.guild
+            user = interaction.user
+            conn = sqlite3.connect('voice_monitor_channel.db') # 將創建的語音頻道寫入資料庫
+            comn = conn.cursor()
+            comn.execute("SELECT * FROM voice_monitor_channel WHERE server_id=?",(guild.id,)) # 搜尋伺服器設定的監測頻道
+            rows = comn.fetchall()
+            conn.commit()
+            comn.close()
+            conn.close()
+        except sqlite3.Error as e:
+            channel = self.bot.get_channel(1273144773435326545)
+            await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
+        try:
+            for row in rows:
+                if row is None:
+                    return
+                elif row != None:
+                    channel = self.bot.get_channel(row[3])
+                    print(row[3])
+                    new_channel = await channel.create_thread(name=f"{set_channel.name}", type=discord.ChannelType.public_thread)
+                    try:
+                        conn = sqlite3.connect("voice_surveillanc.db")
+                        comn = conn.cursor()
+                        comn.execute("INSERT INTO voice_surveillanc (surveillanc_guild_name,surveillanc_guild_id,surveillanc_channel_id,surveillanc_reply_channel_id) VALUES (?,?,?,?)", (new_channel.guild.name,new_channel.guild.id,set_channel.id,new_channel.id))
+                        conn.commit() # 將創建的語音頻道寫入監測資料庫
+                        comn.close()
+                        conn.close()
+                    except sqlite3.Error as e:
+                        channel = self.bot.get_channel(1273144773435326545)
+                        await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
+            await interaction.response.send_message("已執行命令",ephemeral=True)
+        except Exception as e:
+            channel = self.bot.get_channel(1273144773435326545)
+            await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
+    
+    
+    
+    
+    
     @commands.Cog.listener()
     async def on_message(self,message:discord.Message):
     #排除自己的訊息，避免陷入無限循環
         if message.author == self.bot.user:
             return
-
-
             # 獲取要發言的頻道
         if message.channel.type == discord.ChannelType.voice:
-
                 try:
                     can = sqlite3.connect("voice_surveillanc.db")
                     car = can.cursor()
@@ -48,7 +86,19 @@ class Voice_surveillanc(commands.Cog):
                 for row in rows:
                     channelid = row[3]
                     channel = self.bot.get_channel(channelid)
-                    await channel.send(f"# 監測訊息\n```\n發言人:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n發言頻道:{message.channel}\n發言內容:\n{message.content}\n```")
+                    random7_int = random.randint(0, 255)
+                    random8_int = random.randint(0, 255)
+                    random9_int = random.randint(0, 255)
+                    if message.author.color is not None:
+                        emb_color = message.author.color
+                    elif message.author.color is None:
+                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                    embed = discord.Embed(title="訊息", description=message.content, color= emb_color)
+                    embed.set_author(name= f"{message.author.name}",  icon_url= message.author.avatar.url)#作者
+                    await channel.send(embed=embed)
+                    if message.attachments:
+                        for attachment in message.attachments:
+                            await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
     
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
@@ -57,8 +107,7 @@ class Voice_surveillanc(commands.Cog):
         if before.author.bot:
             return
         try:
-           if before.channel.type == discord.ChannelType.voice:
-
+            if before.channel.type == discord.ChannelType.voice:
                 try:
                     can = sqlite3.connect("voice_surveillanc.db")
                     car = can.cursor()
@@ -71,7 +120,17 @@ class Voice_surveillanc(commands.Cog):
                 for row in rows:
                     channelid = row[3]
                     channel = self.bot.get_channel(channelid)
-                    await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n{before.content}\n更改後訊息內容:\n{after.content}\n```")
+                    random7_int = random.randint(0, 255)
+                    random8_int = random.randint(0, 255)
+                    random9_int = random.randint(0, 255)
+                    if before.author.color is not None:
+                        emb_color = before.author.color
+                    elif before.author.color is None:
+                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                    embed = discord.Embed(title="修改訊息", description=before.content, color= emb_color)
+                    embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                    embed.add_field(name="修改後:",value=after.content,inline=False)
+                    await channel.send(embed=embed)
                     if before.attachments:
                         for attachment in before.attachments:
                             await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
@@ -86,8 +145,7 @@ class Voice_surveillanc(commands.Cog):
         if message.author.bot:
             return
         try:
-           if message.channel.type == discord.ChannelType.voice:
-
+            if message.channel.type == discord.ChannelType.voice:
                 try:
                     can = sqlite3.connect("voice_surveillanc.db")
                     car = can.cursor()
@@ -100,14 +158,22 @@ class Voice_surveillanc(commands.Cog):
                 for row in rows:
                     channelid = row[3]
                     channel = self.bot.get_channel(channelid)
-                    await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n{message.content}\n```")
+                    random7_int = random.randint(0, 255)
+                    random8_int = random.randint(0, 255)
+                    random9_int = random.randint(0, 255)
+                    if message.author.color is not None:
+                        emb_color = message.author.color
+                    elif message.author.color is None:
+                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                    embed = discord.Embed(title="刪除訊息", description=message.content, color= emb_color)
+                    embed.set_author(name= f"{message.author.name}",  icon_url= message.author.avatar.url)#作者
+                    await channel.send(embed=embed)
                     if message.attachments:
                         for attachment in message.attachments:
                             await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{message.guild.name} {message.author.name} 刪除監測錯誤:{e}")
-
 
 async def setup(bot: commands.Bot):
     voice_surveillanc()

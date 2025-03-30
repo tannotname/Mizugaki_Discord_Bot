@@ -72,6 +72,24 @@ class Server_booster(commands.Cog):
             channel = self.bot.get_channel(error_channel_id)
             await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用new_booster_role錯誤:{e}")
 
+    @app_commands.command(name="set_role_color",description="自訂自己的身分組顏色")
+    @app_commands.describe(colour = "16進位制的色碼")
+    async def set_role_color(self,interaction:discord.Interaction,colour:str):
+        try:
+            guild = interaction.guild
+            member = interaction.user
+            roles = sorted(member.roles, key=lambda r: r.position, reverse=True)  # 依據優先順序排序
+            # 轉換 Hex 顏色為 discord.Color
+            try:
+                color = discord.Colour(int(colour, 16))  # 例如 "#ff0000" 轉換成數值
+            except ValueError:
+                await interaction.response.send_message("請提供有效的 16 進位顏色，例如 `#ff0000`")
+                return
+            # 修改角色顏色
+            await roles[0].edit(color=color)
+            await interaction.response.send_message(f"已將 {roles[0].name} 的顏色更改為 `{color}`!")   
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="new_booster_role",description="自訂身分組顏色跟圖示並給予自己")
     @app_commands.describe(new_role_name = "新的身分組名字",colour = "16進位制的色碼",give_in_you ="是否給予自己此身分組",icoon_fill="身分組圖示,256kb以下的圖檔,與icoon_emoji二選一",icoon_emoji="身分組圖示,此伺服器的emoji,與icoon_fill二選一")

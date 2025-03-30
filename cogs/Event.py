@@ -123,7 +123,7 @@ class Event(commands.Cog):
                         await message.channel.send(f"{row[2]}")
 
 
-                    if message.author.name == 'tan_00_00':
+            if message.author.name == 'tan_00_00':
                         if ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                             replies = [
                                     ('睡你麻痺 起來嗨', 0.1),
@@ -133,7 +133,7 @@ class Event(commands.Cog):
                             # 選擇回覆
                             reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
                             await message.reply(reply,mention_author=False)
-                    elif  ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
+            elif  ('晚安' in message.content and len(message.content) <= 3) or message.content == '晚' or '晚晚'in message.content or '浣安' in message.content or message.content == '浣' or message.content == '睡' : 
                             replies = [
                                     ('睡你麻痺 起來嗨', 0.2),
                                     ('晚安', 0.7),

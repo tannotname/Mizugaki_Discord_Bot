@@ -149,109 +149,154 @@ class Voiceinout(commands.Cog):
             con.close()
             if rows != []:
                 if before.channel is None and after.channel is not None:
-                    nickname = member.nick if member.nick else member.name
-                    can = sqlite3.connect("voicechannelinout.db")
-                    car = can.cursor()
-                    car.execute("SELECT * FROM voicechannelinout WHERE user_id=?",(member.id ,))
-                    rows = car.fetchall()
-                    can.commit()
-                    car.close()
-                    can.close()
-                    if rows == []:
-                        replies1 = (f"耶!他成功了 {nickname}")
-                        replies2 = (f"讓我們歡迎 {nickname} 我們希望他帶個披薩")
-                        replies3 = (f"{nickname} 墜入了 {after.channel.name}")
-                        replies4 = (f"{nickname} 成功降落到 {after.channel.name}")
-                        replies5 = (f"{nickname} 不小心滑進了 {after.channel.name}")
-                        replies6 = (f"{nickname} 跳進了 {after.channel.name}")
-                        replies7 = (f"{nickname} 他來了")
-                        replies8 = (f"{nickname} 駕到")
-                        replies9 = (f"{nickname} 已加入隊伍")
-                        replies10 = (f"野生的 {nickname} 出現了")
-                        replies = [
-                                    (replies1, 0.1),
-                                    (replies2, 0.1),
-                                    (replies3, 0.1),
-                                    (replies4, 0.1),
-                                    (replies5, 0.1),
-                                    (replies6, 0.1),
-                                    (replies7, 0.1),
-                                    (replies8, 0.1),
-                                    (replies9, 0.1),
-                                    (replies10, 0.1)
-                            ]
-                            # 選擇回覆
-                        reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-                    if rows != []:
-                        for row in rows:
-                            in_reply = row[2]
-                            in_reply = str(in_reply)
-                            user_in_reply = in_reply.replace("*user*",nickname,2) # 替換 *user* 為使用者名稱
-                            if "*channel*" in user_in_reply:
-                                user_in_reply = user_in_reply.replace("*channel*",after.channel.name,2)
-                        reply = user_in_reply
-                    
-
-                    channel = after.channel
-                    random7_int = random.randint(0, 255)
-                    random8_int = random.randint(0, 255)
-                    random9_int = random.randint(0, 255)
-                    emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                    embed = discord.Embed(title="成員加入", description=reply, color= emb_color)
-                    
-                    await channel.send(embed=embed)
+                    try:
+                        conn = sqlite3.connect("voicenew.db")
+                        comn = conn.cursor()
+                        comn.execute("SELECT * FROM voicenew WHERE server_id=?",(after.channel.guild.id,)) # 搜尋伺服器設定的頻道
+                        rows = comn.fetchall()
+                        conn.commit()
+                        comn.close()
+                        conn.close()
+                    except sqlite3.Error as e:
+                        await after.channel.send(f"錯誤1:{e}")
+                    try:
+                            for row in rows:
+                                if after.channel.id == row[5]:
+                                    return
+                            nickname = member.nick if member.nick else member.name
+                            can = sqlite3.connect("voicechannelinout.db")
+                            car = can.cursor()
+                            car.execute("SELECT * FROM voicechannelinout WHERE user_id=?",(member.id ,))
+                            rows = car.fetchall()
+                            can.commit()
+                            car.close()
+                            can.close()
+                            if rows == []:
+                                replies1 = (f"耶!他成功了 {nickname}")
+                                replies2 = (f"讓我們歡迎 {nickname} 我們希望他帶個披薩")
+                                replies3 = (f"{nickname} 墜入了 {after.channel.name}")
+                                replies4 = (f"{nickname} 成功降落到 {after.channel.name}")
+                                replies5 = (f"{nickname} 不小心滑進了 {after.channel.name}")
+                                replies6 = (f"{nickname} 跳進了 {after.channel.name}")
+                                replies7 = (f"{nickname} 他來了")
+                                replies8 = (f"{nickname} 駕到")
+                                replies9 = (f"{nickname} 已加入隊伍")
+                                replies10 = (f"野生的 {nickname} 出現了")
+                                replies = [
+                                            (replies1, 0.1),
+                                            (replies2, 0.1),
+                                            (replies3, 0.1),
+                                            (replies4, 0.1),
+                                            (replies5, 0.1),
+                                            (replies6, 0.1),
+                                            (replies7, 0.1),
+                                            (replies8, 0.1),
+                                            (replies9, 0.1),
+                                            (replies10, 0.1)
+                                    ]
+                                    # 選擇回覆
+                                reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
+                            if rows != []:
+                                for row in rows:
+                                    in_reply = row[2]
+                                    in_reply = str(in_reply)
+                                    user_in_reply = in_reply.replace("*user*",nickname,2) # 替換 *user* 為使用者名稱
+                                    if "*channel*" in user_in_reply:
+                                        user_in_reply = user_in_reply.replace("*channel*",after.channel.name,2)
+                                reply = user_in_reply
+                            channel = after.channel
+                            random7_int = random.randint(0, 255)
+                            random8_int = random.randint(0, 255)
+                            random9_int = random.randint(0, 255)
+                            if member.color is not None:
+                                emb_color = member.color
+                            elif member.color is None:
+                                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                            embed = discord.Embed(title="成員加入", description=reply, color= emb_color)
+                            if member.guild_avatar is not None:
+                                member_avatar = member.guild_avatar.url
+                            elif member.guild_avatar is None:
+                                member_avatar = member.avatar.url
+                            embed.set_author(name= f"{member.name}",  icon_url= member_avatar)#作者
+                            await channel.send(embed=embed)
+                    except Exception as e:
+                        await after.channel.send(f"錯誤2:{e}")
                 elif after.channel is None and before.channel is not None:
-                    nickname = member.nick if member.nick else member.name
-                    can = sqlite3.connect("voicechannelinout.db")
-                    car = can.cursor()
-                    car.execute("SELECT * FROM voicechannelinout WHERE user_id=?",(member.id ,))
-                    rows = car.fetchall()
-                    can.commit()
-                    car.close()
-                    can.close()
-                    if rows == []:
-                        replies1 = (f"讓我們哀弔 {nickname}")
-                        replies2 = (f" {nickname} 他不愛我們所以離開了")
-                        replies3 = (f"{nickname} 跳出了 {before.channel.name}")
-                        replies4 = (f"{nickname} 成功離開了 {before.channel.name}")
-                        replies5 = (f"{nickname} 不小心掉出了 {before.channel.name}")
-                        replies6 = (f"{nickname} 跑走了")
-                        replies7 = (f"{nickname} 他離開了")
-                        replies8 = (f"{nickname} 墜落")
-                        replies9 = (f"{nickname} 起飛")
-                        replies10 = (f"不野生的 {nickname} 離開了")
-                        replies = [
-                                    (replies1, 0.1),
-                                    (replies2, 0.1),
-                                    (replies3, 0.1),
-                                    (replies4, 0.1),
-                                    (replies5, 0.1),
-                                    (replies6, 0.1),
-                                    (replies7, 0.1),
-                                    (replies8, 0.1),
-                                    (replies9, 0.1),
-                                    (replies10, 0.1)
-                            ]
-                            # 選擇回覆
-                        reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
-                    if rows != []:
-                        for row in rows:
-                            out_reply = row[3]
-                            out_reply = str(out_reply)
-                            user_out_reply = out_reply.replace("*user*",nickname,2)
-                            if "*channel*" in user_out_reply:
-                                user_out_reply = user_out_reply.replace("*channel*",before.channel.name,2)
-                        reply = user_out_reply
-                    
-                    
-                    channel = before.channel
-                    random7_int = random.randint(0, 255)
-                    random8_int = random.randint(0, 255)
-                    random9_int = random.randint(0, 255)
-                    emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                    embed = discord.Embed(title="成員out", description=reply, color= emb_color)
-                    
-                    await channel.send(embed=embed)
+                    try:
+                        conn = sqlite3.connect("voicenew.db")
+                        comn = conn.cursor()
+                        comn.execute("SELECT * FROM voicenew WHERE server_id=?",(before.channel.guild.id,)) # 搜尋伺服器設定的頻道
+                        rows = comn.fetchall()
+                        conn.commit()
+                        comn.close()
+                        conn.close()
+                    except sqlite3.Error as e:
+                        await before.channel.send(f"錯誤1:{e}")
+                    try:
+                            for row in rows:
+                                if before.channel.id == row[5]:
+                                    return
+                            nickname = member.nick if member.nick else member.name
+                            can = sqlite3.connect("voicechannelinout.db")
+                            car = can.cursor()
+                            car.execute("SELECT * FROM voicechannelinout WHERE user_id=?",(member.id ,))
+                            rows = car.fetchall()
+                            can.commit()
+                            car.close()
+                            can.close()
+                            if rows == []:
+                                replies1 = (f"讓我們哀弔 {nickname}")
+                                replies2 = (f" {nickname} 他不愛我們所以離開了")
+                                replies3 = (f"{nickname} 跳出了 {before.channel.name}")
+                                replies4 = (f"{nickname} 成功離開了 {before.channel.name}")
+                                replies5 = (f"{nickname} 不小心掉出了 {before.channel.name}")
+                                replies6 = (f"{nickname} 跑走了")
+                                replies7 = (f"{nickname} 他離開了")
+                                replies8 = (f"{nickname} 墜落")
+                                replies9 = (f"{nickname} 起飛")
+                                replies10 = (f"不野生的 {nickname} 離開了")
+                                replies = [
+                                            (replies1, 0.1),
+                                            (replies2, 0.1),
+                                            (replies3, 0.1),
+                                            (replies4, 0.1),
+                                            (replies5, 0.1),
+                                            (replies6, 0.1),
+                                            (replies7, 0.1),
+                                            (replies8, 0.1),
+                                            (replies9, 0.1),
+                                            (replies10, 0.1)
+                                    ]
+                                    # 選擇回覆
+                                reply = random.choices([reply[0] for reply in replies], weights=[reply[1] for reply in replies], k=1)[0]
+                            if rows != []:
+                                for row in rows:
+                                    out_reply = row[3]
+                                    out_reply = str(out_reply)
+                                    user_out_reply = out_reply.replace("*user*",nickname,2)
+                                    if "*channel*" in user_out_reply:
+                                        user_out_reply = user_out_reply.replace("*channel*",before.channel.name,2)
+                                reply = user_out_reply
+                            
+                            
+                            channel = before.channel
+                            random7_int = random.randint(0, 255)
+                            random8_int = random.randint(0, 255)
+                            random9_int = random.randint(0, 255)
+                            if member.color is not None:
+                                emb_color = member.color
+                            elif member.color is None:
+                                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                            embed = discord.Embed(title="成員out", description=reply, color= emb_color)
+                            if member.guild_avatar is not None:
+                                member_avatar = member.guild_avatar.url
+                            elif member.guild_avatar is None:
+                                member_avatar = member.avatar.url
+                            embed.set_author(name= f"{member.name}",  icon_url= member_avatar)#作者
+                            
+                            await channel.send(embed=embed)
+                    except Exception as e:
+                        await before.channel.send(f"錯誤2:{e}")
                 elif before.channel != after.channel:
                     if after.channel is not None:
                         nickname = member.nick if member.nick else member.name
@@ -302,9 +347,16 @@ class Voiceinout(commands.Cog):
                         random7_int = random.randint(0, 255)
                         random8_int = random.randint(0, 255)
                         random9_int = random.randint(0, 255)
-                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                        if member.color is not None:
+                            emb_color = member.color
+                        elif member.color is None:
+                            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                         embed = discord.Embed(title="成員加入", description=reply, color= emb_color)
-                        
+                        if member.guild_avatar is not None:
+                                member_avatar = member.guild_avatar.url
+                        elif member.guild_avatar is None:
+                                member_avatar = member.avatar.url
+                        embed.set_author(name= f"{member.name}",  icon_url= member_avatar)#作者
                         await channel.send(embed=embed)
                         # 發送離開訊息
                         can = sqlite3.connect("voicechannelinout.db")
@@ -352,9 +404,16 @@ class Voiceinout(commands.Cog):
                         random7_int = random.randint(0, 255)
                         random8_int = random.randint(0, 255)
                         random9_int = random.randint(0, 255)
-                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                        if member.color is not None:
+                            emb_color = member.color
+                        elif member.color is None:
+                            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                         embed = discord.Embed(title="成員out", description=reply, color= emb_color)
-                        
+                        if member.guild_avatar is not None:
+                                member_avatar = member.guild_avatar.url
+                        elif member.guild_avatar is None:
+                                member_avatar = member.avatar.url
+                        embed.set_author(name= f"{member.name}",  icon_url= member_avatar)#作者
                         await channel.send(embed=embed)
 
         except Exception as e:

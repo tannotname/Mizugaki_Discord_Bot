@@ -1,4 +1,3 @@
-import datetime
 import random
 import sqlite3
 import discord
@@ -60,7 +59,18 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 channelid = row[3]
                 channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測更改訊息\n```\n更改人:{before.author.name}({before.author.nick if before.author.nick else before.author.name})\n訊息更改頻道:{before.channel}\n更改前訊息內容:\n{before.content}\n更改後訊息內容:\n{after.content}\n```")
+                random7_int = random.randint(0, 255)
+                random8_int = random.randint(0, 255)
+                random9_int = random.randint(0, 255)
+                if before.author.color is not None:
+                    emb_color = before.author.color
+                elif before.author.color is None:
+                    emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                embed = discord.Embed(title="修改訊息", description=before.content, color= emb_color)
+                embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                embed.add_field(name="修改後:",value=after.content,inline=False)
+                embed.add_field(name="在頻道:",value=before.channel.name,inline=False)
+                await channel.send(embed=embed)
                 if before.attachments:
                     for attachment in before.attachments:
                         await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
@@ -83,7 +93,17 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 channelid = row[3]
                 channel = self.bot.get_channel(channelid)
-                await channel.send(f"# 監測刪除訊息\n```\n刪除訊息之使用者:{message.author.name}({message.author.nick if message.author.nick else message.author.name})\n刪除訊息頻道:{message.channel}\n刪除內容:\n{message.content}\n```")
+                random7_int = random.randint(0, 255)
+                random8_int = random.randint(0, 255)
+                random9_int = random.randint(0, 255)
+                if message.author.color is not None:
+                    emb_color = message.author.color
+                elif message.author.color is None:
+                    emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                embed = discord.Embed(title="刪除訊息", description=message.content, color= emb_color)
+                embed.set_author(name= f"{message.author.name}",  icon_url= message.author.avatar.url)#作者
+                embed.add_field(name="在頻道:",value=message.channel.name,inline=False)
+                await channel.send(embed=embed)
                 if message.attachments:
                     for attachment in message.attachments:
                         await channel.send(file=discord.File(f'pho\\{attachment.filename}'))

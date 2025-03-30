@@ -334,12 +334,12 @@ class Voicenew(commands.Cog):
                                 elif row != None:
                                     channel = self.bot.get_channel(row[3])
                                     print(row[3])
-                                    new_channel = await channel.create_thread(name=f"{newchannel.name}", type=discord.ChannelType.private_thread)
+                                    new_channel = await channel.create_thread(name=f"{newchannel.name}", type=discord.ChannelType.public_thread)
                                     try:
                                         conn = sqlite3.connect("voice_surveillanc.db")
                                         comn = conn.cursor()
                                         comn.execute("INSERT INTO voice_surveillanc (surveillanc_guild_name,surveillanc_guild_id,surveillanc_channel_id,surveillanc_reply_channel_id) VALUES (?,?,?,?)", (new_channel.guild.name,new_channel.guild.id,newchannel.id,new_channel.id))
-                                        conn.commit()
+                                        conn.commit() # 將創建的語音頻道寫入監測資料庫
                                         comn.close()
                                         conn.close()
                                     except sqlite3.Error as e:
@@ -372,7 +372,6 @@ class Voicenew(commands.Cog):
                 conn.commit()
                 cursor.close()
                 conn.close()
-
             except sqlite3.Error as e:
                 print(f"資料庫連接時發生錯誤4: {e}")
 

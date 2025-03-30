@@ -3,8 +3,7 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 from discord import app_commands
-from dotenv import load_dotenv
-import os
+from pypresence import Presence  
 
 error_channel = 1273144773435326545
 
@@ -37,6 +36,8 @@ class TaskBase(commands.Cog):
             slash = await self.bot.tree.sync()
             await self.bot.change_presence(activity=discord.Game(name=f"/help|服務 {guildssum} 個伺服器|{count} 位使用者|載入{len(slash)}個指令中"))
             
+
+             
         except Exception as erro:
             # 錯誤輸出
             print(erro)
@@ -55,12 +56,19 @@ class TaskBase(commands.Cog):
             count=0
             for guild in guilds:
                 count += guild.member_count
+
+            
             await self.bot.change_presence(activity=discord.Game(name=f"/help|服務{guildssum}個伺服器|{count}位使用者|載入{len(slash)}個指令中"))
             await interaction.response.send_message(f"已設定bot狀態為 /help|服務{guildssum}個伺服器|{count}位使用者|載入{len(slash)}個指令中")
         except Exception as e:
             await interaction.response.send_message(f"發生錯誤:{e}",ephemeral=True)
             channel = self.bot.get_channel(error_channel)
             await channel.send(f"# 機器人狀態報錯\n>錯誤:{e}")
+
+        
+
+
+
 
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
