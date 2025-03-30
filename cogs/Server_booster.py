@@ -145,7 +145,35 @@ class Server_booster(commands.Cog):
             channel = self.bot.get_channel(error_channel_id)
             await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用new_booster_role4錯誤:{e}")
 
-    
+    @app_commands.command(name="see_guild_booster",description="查看伺服器的加成者")
+    @app_commands.describe(server_id = "伺服器id")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def see_guild_booster(self,interaction:discord.Interaction,server_id:str):
+        try:
+            guild = self.bot.get_guild(int(server_id))
+            if guild is None:
+                await interaction.response.send_message("伺服器不存在")
+                return
+            coonn = sqlite3.connect("server_booster.db")
+            comn = coonn.cursor()
+            comn.execute("SELECT * FROM server_booster WHERE server_id=?",(int(server_id),))
+            rows = comn.fetchall()
+            comn.close()
+            coonn.close()
+            for row in rows:
+                if row[2]:
+                    role = guild.get_role(row[2])
+                    users = role.members
+                    member = f"伺服器加成者身分組名稱{role.name}:\n"
+                    for user in users:
+                        member += f"{user.name}\n"
+                    if len(users) == 0:
+                        member += "目前沒有擁有加成身分組的人"
+            await interaction.response.send_message(member)
+        except Exception as e:
+            await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
+            channel = self.bot.get_channel(error_channel_id)
+            await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用see_guild_booster錯誤:{e}")
     
 
 async def setup(bot: commands.Bot):

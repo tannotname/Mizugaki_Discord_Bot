@@ -8,6 +8,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
 intents.guilds = True
+intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 ABC = "iso_4217"
