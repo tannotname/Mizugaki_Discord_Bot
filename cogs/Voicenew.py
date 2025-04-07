@@ -363,12 +363,24 @@ class Voicenew(commands.Cog):
                 for row in rows:
                     channel_id = int(row[1])
                     channel = self.bot.get_channel(channel_id)
+                    channel_name = channel.name
                     if channel is None:
                         cursor.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,))
                     elif len(channel.members) == 0: # 檢查channel.members是否為空
                         await channel.delete() # 刪除channel
                         print(f"頻道 {channel.name} 已被刪除")
                         cursor.execute("DELETE FROM newchannel WHERE channelid=?", (channel_id,)) # 刪除資料庫中資料
+                conn.commit()
+                cursor.close()
+                conn.close()
+
+                # 刪除監測討論串資料刪除
+                conn = sqlite3.connect("voice_surveillanc.db")
+                cursor = conn.cursor()
+                channel = self.bot.get_channel(channel_id)
+                if channel is None:
+                    cursor.execute("DELETE FROM voice_surveillanc WHERE surveillanc_channel_id=?", (channel_id,)) # 刪除資料庫中資料
+                    print(f"監測討論串 {channel_name} 登記資料已被刪除")
                 conn.commit()
                 cursor.close()
                 conn.close()

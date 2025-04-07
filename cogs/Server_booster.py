@@ -128,7 +128,7 @@ class Server_booster(commands.Cog):
                                     try:
                                         colour = discord.Colour(int(colour, 16))
                                         if icoon is not None:
-                                            newrole = await guild.create_role(name=new_role_name,colour=colour,display_icoon=icoon)
+                                            newrole = await guild.create_role(name=new_role_name,colour=colour,display_icon=icoon)
                                         elif icoon is None:
                                             newrole = await guild.create_role(name=new_role_name,colour=colour)
                                         await interaction.response.send_message(f"已新增{newrole.name}")
@@ -136,7 +136,9 @@ class Server_booster(commands.Cog):
                                             await member.add_roles(newrole)
                                             await interaction.followup.send(f"已給予{member.nick} {newrole.name} 身分組")
                                     except Exception as e:
-                                        await interaction.response.send_message(f"顏色格式錯誤{e},請使用十六進制顏色碼，例如 'FF5733'。")
+                                        await interaction.response.send_message(f"錯誤{e}")
+                                        channel = self.bot.get_channel(error_channel_id)
+                                        await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用new_booster_role4錯誤:{e}")
                                         return
                 if row is None:
                     await interaction.response.send_message("您並沒有啟用此功能")
