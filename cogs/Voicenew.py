@@ -14,12 +14,23 @@ row = cur.fetchone()[0]
 
 if row == 0:
     cur.execute("CREATE TABLE voicenew(server_id NUMERIC,server_name TEXT,categoryname TEXT, categoryid NUMERIC,channelname TEXT,channelid NUMERIC)")
-    cur.execute("CREATE TABLE newchannel(channelname TEXT,channelid NUMERIC,channelmember NUMERIC)")
     con.commit()
-    print("表格 'voicenew' 已建立.")
+    print("表格'voicenew'已建立.")
 else:
     print("表格“voicenew”已存在.")
     con.commit()
+try:
+    cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("newchannel",))
+    if row == 0:
+        cur.execute("CREATE TABLE newchannel(channelname TEXT,channelid NUMERIC,channelmember NUMERIC)")
+        con.commit()
+        print("表格'newchannel'已建立.")
+    else:
+        print("表格“newchannel”已存在.")
+        con.commit()
+except sqlite3.Error as e:
+    print(f"資料庫連接時發生錯誤: {e}")
+
 
 con = sqlite3.connect('channel_to_user.db') # 連線資料庫
 cur = con.cursor() # 建立游標
@@ -158,10 +169,7 @@ class Voicenew(commands.Cog):
                     channel = self.bot.get_channel(1273144773435326545)
                     await channel.send(f"{guild.name} {user.name} 資料連接錯誤:{e}")
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -269,15 +277,19 @@ class Voicenew(commands.Cog):
                         comn = conn.cursor()
                         comn.execute("SELECT * FROM newchannel WHERE channelmember=?",(member.id,)) # 搜尋伺服器設定的頻道
                         row = comn.fetchall()
-                        conn.commit()
-                        comn.close()
-                        conn.close()
                         print(row)
                         for row in row:
                             if row != None:
                                 channel = self.bot.get_channel(row[1])
-                                await member.move_to(channel)
-                                return
+                                if channel == None:
+                                    comn.execute("DELETE FROM newchannel WHERE channelid=?", (row[1],))
+                                else:
+                                    await member.move_to(channel)
+                                    print(f"已移動 {member.display_name} 到舊有頻道 {row[0]}")
+                                    return
+                        conn.commit()
+                        comn.close()
+                        conn.close()
                         guild = member.guild
                         category = after.channel.category
                         can = sqlite3.connect("channel_to_user.db") # 搜尋user是否有自訂語音頻道名稱
@@ -352,6 +364,7 @@ class Voicenew(commands.Cog):
                 channel = self.bot.get_channel(1273144773435326545)
                 await channel.send(f"{guild.name} {member.name} 動態語音錯誤:{e}")
 
+
         if (before.channel is not None and after.channel is None) or (before.channel != after.channel and before.channel is not None):
             try:
                 # 連接
@@ -387,6 +400,26 @@ class Voicenew(commands.Cog):
             except sqlite3.Error as e:
                 print(f"資料庫連接時發生錯誤4: {e}")
 
-
+    @app_commands.command(name="delete_voice_surveillanc_data",description="刪除監測討論串登記資料")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def delete_voice_surveillanc_data(self,interaction:discord.Interaction):
+        if interaction.user.id == 710128890240041091:
+            try:
+                conn = sqlite3.connect("voice_surveillanc.db")
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM voice_surveillanc")
+                rows = cursor.fetchall()
+                for row in rows:
+                    channel_id = int(row[2])
+                    channel = self.bot.get_channel(channel_id)
+                    if channel is None:
+                        cursor.execute("DELETE FROM voice_surveillanc WHERE surveillanc_channel_id=?", (channel_id,)) # 刪除資料庫中資料
+                        print(f"監測討論串登記資料已被刪除")
+                        conn.commit()
+                cursor.close()
+                conn.close()
+                await interaction.response.send_message("監測討論串登記資料已被刪除",ephemeral=True)
+            except sqlite3.Error as e:
+                await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 async def setup(bot: commands.Bot):
     await bot.add_cog(Voicenew(bot))

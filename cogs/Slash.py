@@ -1,4 +1,4 @@
-import subprocess
+import sqlite3
 from typing import Optional
 import discord
 import random
@@ -10,7 +10,6 @@ import os
 import string
 import random
 from dotenv import load_dotenv
-import xml.etree.ElementTree as ET
 
 load_dotenv()
 
@@ -21,6 +20,21 @@ if API_KEY is None:
 
 ffmpeg_process = None  # 將ffmpeg_process定義為全局變量
 
+#drop table 
+con = sqlite3.connect('interaction_surveillanc.db') # 連線資料庫
+cur = con.cursor() # 建立游標
+ # 查詢第一筆資料
+cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?", ("interaction_surveillanc",))
+row = cur.fetchone()[0]
+    # 查詢資料庫是否存在
+if row == 0:
+    cur.execute("CREATE TABLE interaction_surveillanc(name Text,id NUMERIC,use_times NUMERIC)")
+    con.commit()
+    print("表格 'interaction_surveillanc' 已建立.")
+else:
+    print("表格“interaction_surveillanc”已存在.")
+    con.commit()
+
 def check_if_guild_is_me(interaction: discord.Interaction) -> bool:
     return interaction.guild.id == 1238133524662325351
 
@@ -29,6 +43,7 @@ class Slash(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name = "提問", description = "讓機器人回答你的問題")
+    @app_commands.user_install()
     async def 提問(self, interaction: discord.Interaction, 問題: str):
         # 生成一個 1 到 10 之間的隨機整數（包含 1 和 10）
         random2_int = random.randint(1, 99) 
@@ -44,43 +59,10 @@ class Slash(commands.Cog):
         random4_int = random.randint(0, 255)
         random5_int = random.randint(0, 255)
         reply = random.choices([reply[0] for reply in replies2], weights=[reply[1] for reply in replies2], k=1)[0]
-        sentence1 ="我覺得 {} <:986296828322525224:1026433054958440508>".format(reply)
+        sentence1 ="我覺得 {}".format(reply)
         emb_color = discord.Color.from_rgb(random3_int, random4_int , random5_int)
-        embed = discord.Embed(title='<:74277272:1209520682728427551> | '+ 問題 , description = sentence1 , color = emb_color)
+        embed = discord.Embed(title='<:5765653:1380741187261956206> | '+ 問題 , description = sentence1 , color = emb_color)
         await interaction.response.send_message(embed = embed)
-
-    @app_commands.command(name = "匯率", description = "查看匯率")
-    @app_commands.choices(
-        iso = [
-            Choice(name = "澳幣", value = "AUD"),
-            Choice(name = "加幣", value = "CAD" ),
-            Choice(name = "人民幣", value = "CNY"),
-            Choice(name = "歐元", value = "EUR"),
-            Choice(name = "港幣", value = "HKD"),
-            Choice(name = "日圓", value = "JPY"),
-            Choice(name = "澳門幣", value = "MOP"),
-            Choice(name = "新臺幣", value = "TWD"),
-            Choice(name = "英鎊", value = "GBP"),
-            Choice(name = "韓圜", value = "KRW"),
-            Choice(name = "美元", value = "USD"),
-            Choice(name = "越南盾", value = "VND"),
-        ]
-)
-    async def 匯率(self,interaction: discord.Interaction, iso:Choice[str]):
-            # 發送請求到 Open Exchange Rates API 以獲取匯率
-            iso = iso.value # type: ignore
-            response = requests.get(f'https://open.er-api.com/v6/latest/TWD', params={'app_id': API_KEY})
-            data = response.json()
-            # 檢查是否成功取得匯率數據
-            if response.status_code == 200:
-                # 檢查貨幣是否有效
-                if iso in data['rates']:
-                    exchange_rate = data['rates'][iso]
-                    await interaction.response.send_message(f'1 TWD = {exchange_rate} {iso} ')
-                else:
-                    await interaction.response.send_message('無效的貨幣代碼')
-            else:
-                await interaction.response.send_message('無法獲取匯率數據')
 
     @app_commands.command(name="新增動態文字_and_語音頻道",description="新增屬於你的頻道組合")
     async def newchannelyou(self,interaction:discord.Interaction,channelname:str):
@@ -203,6 +185,7 @@ class Slash(commands.Cog):
 
 
     @app_commands.command(name="say",description="讓機器人幫你說話")
+    @app_commands.user_install()
     async def say(self,interaction:discord.Interaction,話:str):
         try:
             if "@" in 話:
@@ -223,10 +206,7 @@ class Slash(commands.Cog):
             await member.ban()
             await interaction.response.send_message(f"已封鎖{member.name}")
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -238,59 +218,7 @@ class Slash(commands.Cog):
             await member.kick()
             await interaction.response.send_message(f"已放逐指定成員{member.name}")
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-            embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-            await interaction.response.send_message(embed=embed) 
-
-    @app_commands.command(name="複製伺服器頻道",description="複製所選的伺服器所有頻道")
-    @app_commands.checks.has_permissions(administrator=True)
-    async def copychannel(self,interaction:discord.Interaction,guildid1:str,guildid2:str):
-        try:
-            guild = self.bot.get_guild(int(guildid1))
-            guild2 = self.bot.get_guild(int(guildid2))
-            try:
-                for category in guild.categories:
-                    await guild2.create_category(name=category.name)
-            except Exception as e:
-                random7_int = random.randint(0, 255)
-                random8_int = random.randint(0, 255)
-                random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-                await interaction.response.send_message(embed=embed) 
-            try:
-                for channel in guild.text_channels:
-                    await guild2.create_text_channel(name=channel.name, category=channel.category)
-            except Exception as e:
-                random7_int = random.randint(0, 255)
-                random8_int = random.randint(0, 255)
-                random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-                await interaction.response.send_message(embed=embed) 
-            try:
-                for channel in guild.voice_channels:
-                    await guild2.create_voice_channel(name=channel.name, category=channel.category)
-            except Exception as e:
-                random7_int = random.randint(0, 255)
-                random8_int = random.randint(0, 255)
-                random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                embed = discord.Embed(title="錯誤", color= emb_color)
-                embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-                await interaction.response.send_message(embed=embed) 
-            await interaction.response.send_message("執行",ephemeral=True)
-        except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -312,10 +240,7 @@ class Slash(commands.Cog):
             await guild.create_text_channel(name=channelname,category=category)
             await interaction.response.send_message("執行",ephemeral=True)
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -340,42 +265,25 @@ class Slash(commands.Cog):
                     emoji = await interaction.guild.create_custom_emoji(name=emojiname2, image=image_data)
                     await interaction.response.send_message(f"成功新增表情符號: <:{emoji.name}:{emoji.id}>")
             except Exception as e:
-                random7_int = random.randint(0, 255)
-                random8_int = random.randint(0, 255)
-                random9_int = random.randint(0, 255)
-                emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+                emb_color = discord.Color.from_rgb(255,0,0)
                 embed = discord.Embed(title="錯誤", color= emb_color)
                 embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-                await interaction.response.send_message(embed=embed)
-                
-    @app_commands.command(name="new_sticker",description="為伺服器新增貼圖")
-    @app_commands.describe(newtickerfile = "貼圖的檔案",stickername = "貼圖的名字(可用中文)",emoji = "代表貼圖的表情符號(只能使用原始emoji或本伺服器的emoji)",description = "貼圖的說明",reason ="新增貼圖原因")
-    @app_commands.checks.has_permissions(administrator=True)
-    async def newsticker(self,interaction:discord.Interaction,newtickerfile :discord.Attachment,stickername:str,emoji:str,description:str,reason:str):
+                await interaction.response.send_message(embed=embed) 
+
+    @commands.Cog.listener()
+    async def on_interaction(self, interaction: discord.Interaction):
         try:
-            if interaction.guild.id == 1238133524662325351:
-                if len(stickername) < 23:
-                    try:
-                        await newtickerfile.save(f'pho\\{newtickerfile.filename}')
-                    except Exception as e:
-                        random7_int = random.randint(0, 255)
-                        random8_int = random.randint(0, 255)
-                        random9_int = random.randint(0, 255)
-                        emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
-                        embed = discord.Embed(title="錯誤", color= emb_color)
-                        embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-                        await interaction.response.send_message(embed=embed)
-                    file = discord.File(f'pho\\{newtickerfile.filename}')
-                    sticker = await interaction.guild.create_sticker(name=stickername,file=file,emoji=emoji,description=description,reason=reason)
-                    await interaction.response.send_message(f"以新增貼圖 {sticker.name}")
+            name = interaction.command.name
+            user = interaction.user
+            interaction_channel = interaction.channel
+            interaction_id =interaction.id
+            channel = self.bot.get_channel(1273145125773639752)
+            await channel.send(f"{user.name} 在 {interaction_channel.name} 使用指令:{name}/id:{interaction_id}")
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
-            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
-            await interaction.response.send_message(embed=embed) 
+            channel= self.bot.get_channel(1273144773435326545)
+            await channel.send(f"發生錯誤:{e}")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Slash(bot))

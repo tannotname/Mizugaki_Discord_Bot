@@ -418,17 +418,14 @@ class Voiceinout(commands.Cog):
 
         except Exception as e:
             if before.channel is None and after.channel is not None: # 進入語音頻道
-                await after.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+                await after.channel.send(f"語音進出通知錯誤:{e}")
 
             elif after.channel is None and before.channel is not None: # 離開語音頻道
-                await before.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+                await before.channel.send(f"語音進出通知錯誤:{e}")
 
             elif before.channel != after.channel: # 跳轉語音頻道
                 if after.channel is not None:
-                    if e == "403 Forbidden (error code: 50001): Missing Access":
-                        return
-                    else:
-                        await after.channel.send(f"機器人缺少必要權限:{e}\n# 請給予必要權限以便機器人運行")
+                    await after.channel.send(f"語音進出通知錯誤:{e}")
 
             channel = self.bot.get_channel(error_channel)
             await channel.send(f"{before.channel.guild.name or after.channel.guild.name} {member.name} 語音進出通知錯誤:{e}")

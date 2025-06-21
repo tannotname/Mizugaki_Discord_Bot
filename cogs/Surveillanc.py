@@ -43,6 +43,9 @@ class Surveillanc(commands.Cog):
                         print(f"發生儲存錯誤:{e}")
                         return
                     await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
+            if message.stickers:
+                        for sticker in message.stickers:
+                            await channel.send(sticker.url)
                                                      
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
@@ -67,13 +70,20 @@ class Surveillanc(commands.Cog):
                 elif before.author.color is None:
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="修改訊息", description=before.content, color= emb_color)
-                embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                if before.author.avatar.url is not None:
+                    embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                else:
+                    embed.set_author(name= f"{before.author.name}")
+                embed.add_field(name="修改前:",value=before.content,inline=False)
                 embed.add_field(name="修改後:",value=after.content,inline=False)
                 embed.add_field(name="在頻道:",value=before.channel.name,inline=False)
                 await channel.send(embed=embed)
                 if before.attachments:
                     for attachment in before.attachments:
                         await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
+                if before.stickers:
+                        for sticker in before.stickers:
+                            await channel.send(sticker.url)
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{before.guild.name} {before.author.name} 修改監測錯誤:{e}")
@@ -101,12 +111,18 @@ class Surveillanc(commands.Cog):
                 elif message.author.color is None:
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="刪除訊息", description=message.content, color= emb_color)
-                embed.set_author(name= f"{message.author.name}",  icon_url= message.author.avatar.url)#作者
+                if message.author.avatar.url is not None:
+                    embed.set_author(name= f"{message.author.name}",  icon_url= message.author.avatar.url)#作者
+                else:
+                    embed.set_author(name= f"{message.author.name}")
                 embed.add_field(name="在頻道:",value=message.channel.name,inline=False)
                 await channel.send(embed=embed)
                 if message.attachments:
                     for attachment in message.attachments:
                         await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
+                if message.stickers:
+                        for sticker in message.stickers:
+                            await channel.send(sticker.url)
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{message.guild.name} {message.author.name} 刪除監測錯誤:{e}")

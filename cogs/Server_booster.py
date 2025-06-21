@@ -92,8 +92,8 @@ class Server_booster(commands.Cog):
             await interaction.response.send_message(f"錯誤:{e}",ephemeral=True)
 
     @app_commands.command(name="new_booster_role",description="自訂身分組顏色跟圖示並給予自己")
-    @app_commands.describe(new_role_name = "新的身分組名字",colour = "16進位制的色碼",give_in_you ="是否給予自己此身分組",icoon_fill="身分組圖示,256kb以下的圖檔,與icoon_emoji二選一",icoon_emoji="身分組圖示,此伺服器的emoji,與icoon_fill二選一")
-    async def new_booster_role(self,interaction:discord.Interaction,new_role_name:str,colour:str,give_in_you:bool,icoon_fill:Optional[discord.Attachment],icoon_emoji:Optional[str]):
+    @app_commands.describe(new_role_name = "新的身分組名字",colour = "16進位制的色碼",give_in_you ="是否給予自己此身分組",icoon_fill="身分組圖示,256kb以下的圖檔")
+    async def new_booster_role(self,interaction:discord.Interaction,new_role_name:str,colour:str,give_in_you:bool,icoon_fill:Optional[discord.Attachment]):
         try:
             coonn = sqlite3.connect("server_booster.db")
             comn = coonn.cursor()
@@ -118,12 +118,10 @@ class Server_booster(commands.Cog):
                                                 await interaction.response.send_message("圖片大小超過 256KB,請選擇較小的圖示。")
                                                 return
                                             icoon = await icoon_fill.read()  # 讀取二進制數據
-                                        elif icoon_emoji is not None:
-                                            icoon = icoon_emoji
                                     except Exception as e:
-                                        await interaction.response.send_message(f"圖片或emoji錯誤:{e}",ephemeral=True)
+                                        await interaction.response.send_message(f"圖片錯誤:{e}",ephemeral=True)
                                         channel = self.bot.get_channel(error_channel_id)
-                                        await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用new_booster_role圖片或emoji錯誤:{e}")
+                                        await channel.send(f"server:{interaction.guild.name}使用者:{interaction.user.name}使用new_booster_role圖片錯誤:{e}")
                                         return
                                     try:
                                         colour = discord.Colour(int(colour, 16))

@@ -19,7 +19,7 @@ class TaskBase(commands.Cog):
         self.count.cancel()
 
     # 定義要執行的循環函式
-    @tasks.loop(seconds = 6)
+    @tasks.loop(hours=1)
     async def count(self):
         try:
             execution_time = int(time.time() - self.start_time)

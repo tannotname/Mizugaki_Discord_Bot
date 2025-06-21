@@ -99,7 +99,10 @@ class Voice_surveillanc(commands.Cog):
                     if message.attachments:
                         for attachment in message.attachments:
                             await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
-    
+                    if message.stickers:
+                        for sticker in message.stickers:
+                            await channel.send(sticker.url)
+
     @commands.Cog.listener()
     async def on_message_edit(self,before: discord.Message, after: discord.Message):
         if before.author == self.bot.user:
@@ -134,6 +137,9 @@ class Voice_surveillanc(commands.Cog):
                     if before.attachments:
                         for attachment in before.attachments:
                             await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
+                    if before.stickers:
+                        for sticker in before.stickers:
+                            await channel.send(sticker.url)
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{before.guild.name} {before.author.name} 修改監測錯誤:{e}")
@@ -171,6 +177,9 @@ class Voice_surveillanc(commands.Cog):
                     if message.attachments:
                         for attachment in message.attachments:
                             await channel.send(file=discord.File(f'pho\\{attachment.filename}'))
+                    if message.stickers:
+                        for sticker in message.stickers:
+                            await channel.send(sticker.url)
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
             await channel.send(f"{message.guild.name} {message.author.name} 刪除監測錯誤:{e}")
