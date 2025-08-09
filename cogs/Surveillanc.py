@@ -70,7 +70,7 @@ class Surveillanc(commands.Cog):
                 elif before.author.color is None:
                     emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                 embed = discord.Embed(title="修改訊息", description=before.content, color= emb_color)
-                if before.author.avatar.url is not None:
+                if before.author.avatar is not None:
                     embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
                 else:
                     embed.set_author(name= f"{before.author.name}")
@@ -147,10 +147,7 @@ class Surveillanc(commands.Cog):
             con.close()
             cur.close()
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -167,10 +164,7 @@ class Surveillanc(commands.Cog):
             for row in rows:
                 await interaction.response.send_message(row[1],row[2])
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed) 
@@ -185,10 +179,7 @@ class Surveillanc(commands.Cog):
             can.commit()
             await interaction.response.send_message(f"{interaction.guild.name}已刪除")
         except Exception as e:
-            random7_int = random.randint(0, 255)
-            random8_int = random.randint(0, 255)
-            random9_int = random.randint(0, 255)
-            emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
+            emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)
             embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
             await interaction.response.send_message(embed=embed)

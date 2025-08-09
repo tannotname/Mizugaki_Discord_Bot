@@ -2,21 +2,14 @@ import sqlite3
 from typing import Optional
 import discord
 import random
-import requests
 from discord import app_commands
 from discord.ext import commands
-from discord.app_commands import Choice
-import os
 import string
 import random
 from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
-if API_KEY is None:
-    print("錯誤：找不到 API 令牌。請設置 API 環境變數。")
-    exit()
 
 ffmpeg_process = None  # 將ffmpeg_process定義為全局變量
 
@@ -28,41 +21,19 @@ cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name=?
 row = cur.fetchone()[0]
     # 查詢資料庫是否存在
 if row == 0:
-    cur.execute("CREATE TABLE interaction_surveillanc(name Text,id NUMERIC,use_times NUMERIC)")
+    cur.execute("CREATE TABLE interaction_surveillanc(name Text,use_times NUMERIC)")
     con.commit()
     print("表格 'interaction_surveillanc' 已建立.")
 else:
     print("表格“interaction_surveillanc”已存在.")
     con.commit()
 
-def check_if_guild_is_me(interaction: discord.Interaction) -> bool:
-    return interaction.guild.id == 1238133524662325351
 
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "提問", description = "讓機器人回答你的問題")
-    @app_commands.user_install()
-    async def 提問(self, interaction: discord.Interaction, 問題: str):
-        # 生成一個 1 到 10 之間的隨機整數（包含 1 和 10）
-        random2_int = random.randint(1, 99) 
-        my_list = ['不是', '是']
-        random_element = random.choice(my_list)
-        sentence = "{} % {}".format(random2_int, random_element)
-        replies2 = [
-                    ('就是了拉', 0.2),
-                    (sentence, 0.6),
-                    ('或許大概應該不是', 0.2)
-                ]
-        random3_int = random.randint(0, 255)
-        random4_int = random.randint(0, 255)
-        random5_int = random.randint(0, 255)
-        reply = random.choices([reply[0] for reply in replies2], weights=[reply[1] for reply in replies2], k=1)[0]
-        sentence1 ="我覺得 {}".format(reply)
-        emb_color = discord.Color.from_rgb(random3_int, random4_int , random5_int)
-        embed = discord.Embed(title='<:5765653:1380741187261956206> | '+ 問題 , description = sentence1 , color = emb_color)
-        await interaction.response.send_message(embed = embed)
+    
 
     @app_commands.command(name="新增動態文字_and_語音頻道",description="新增屬於你的頻道組合")
     async def newchannelyou(self,interaction:discord.Interaction,channelname:str):
@@ -270,15 +241,52 @@ class Slash(commands.Cog):
                 embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
                 await interaction.response.send_message(embed=embed) 
 
+    @app_commands.command(name="user_info",description="列出使用者資訊")
+    async def user_info(self,interaction:discord.Interaction,user:discord.User):
+        try:
+            await interaction.response.send_message(f"使用者ID:{user.id}\n使用者名稱:{user.name}\n使用者頭像:{user.avatar.url}",ephemeral=True)
+        except Exception as e:
+            emb_color = discord.Color.from_rgb(255,0,0)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+            await interaction.response.send_message(embed=embed)
+
+
+    @app_commands.command(name = "question", description = "讓機器人回答你的問題")
+    async def question(self, interaction:discord.Interaction, 問題:str):
+        try:
+            # 生成一個 1 到 10 之間的隨機整數（包含 1 和 10）
+            random2_int = random.randint(1, 99) 
+            my_list = ['不是', '是']
+            random_element = random.choice(my_list)
+            sentence = "{} % {}".format(random2_int, random_element)
+            replies2 = [
+                        ('就是了拉', 0.2),
+                        (sentence, 0.6),
+                        ('或許大概應該不是', 0.2)
+                    ]
+            random3_int = random.randint(0, 255)
+            random4_int = random.randint(0, 255)
+            random5_int = random.randint(0, 255)
+            reply = random.choices([reply[0] for reply in replies2], weights=[reply[1] for reply in replies2], k=1)[0]
+            sentence1 ="我覺得 {}".format(reply)
+            emb_color = discord.Color.from_rgb(random3_int, random4_int , random5_int)
+            embed = discord.Embed(title='<:5765653:1380741187261956206> | '+ 問題 , description = sentence1 , color = emb_color)
+            await interaction.response.send_message(embed = embed)
+        except Exception as e:
+            emb_color = discord.Color.from_rgb(255,0,0)
+            embed = discord.Embed(title="錯誤", color= emb_color)
+            embed.add_field(name=e,value="機器人支援伺服器:https://discord.gg/Eq52KNPca9",inline=False)
+            await interaction.response.send_message(embed=embed)
+
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
         try:
             name = interaction.command.name
             user = interaction.user
             interaction_channel = interaction.channel
-            interaction_id =interaction.id
             channel = self.bot.get_channel(1273145125773639752)
-            await channel.send(f"{user.name} 在 {interaction_channel.name} 使用指令:{name}/id:{interaction_id}")
+            await channel.send(f"{user.name} 在 {interaction_channel.name} 使用指令:{name}")
         except Exception as e:
             emb_color = discord.Color.from_rgb(255,0,0)
             embed = discord.Embed(title="錯誤", color= emb_color)

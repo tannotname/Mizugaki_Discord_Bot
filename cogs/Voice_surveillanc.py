@@ -131,7 +131,10 @@ class Voice_surveillanc(commands.Cog):
                     elif before.author.color is None:
                         emb_color = discord.Color.from_rgb(random7_int, random8_int , random9_int)
                     embed = discord.Embed(title="修改訊息", description=before.content, color= emb_color)
-                    embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                    if before.author.avatar.url is not None:
+                        embed.set_author(name= f"{before.author.name}",  icon_url= before.author.avatar.url)#作者
+                    else:
+                        embed.set_author(name= f"{before.author.name}")
                     embed.add_field(name="修改後:",value=after.content,inline=False)
                     await channel.send(embed=embed)
                     if before.attachments:
@@ -142,7 +145,7 @@ class Voice_surveillanc(commands.Cog):
                             await channel.send(sticker.url)
         except Exception as e:
             channel = self.bot.get_channel(1273144773435326545)
-            await channel.send(f"{before.guild.name} {before.author.name} 修改監測錯誤:{e}")
+            await channel.send(f"{before.guild.name} {before.author.name} 語音修改監測錯誤:{e}")
             
     @commands.Cog.listener()
     async def on_message_delete(self,message: discord.Message):
